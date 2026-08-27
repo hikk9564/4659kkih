@@ -45,33 +45,32 @@ export default function Home() {
             fontSize: "14px",
           }}
         >
-          <a href="#소개" style={{ color: "#2878B5", textDecoration: "none" }}>
-            소개
-          </a>
-
-          <a href="/" style={{ color: "#2878B5", textDecoration: "none" }}>
-            게시판
-          </a>
-
-          <a href="#자캐" style={{ color: "#2878B5", textDecoration: "none" }}>
-            자캐
-          </a>
-
-          <a href="#선후관" style={{ color: "#2878B5", textDecoration: "none" }}>
-            선후관
-          </a>
-
-          <a href="#커미션" style={{ color: "#2878B5", textDecoration: "none" }}>
-            커미션
-          </a>
-
-          <a href="#기록" style={{ color: "#2878B5", textDecoration: "none" }}>
-            기록
-          </a>
-
-          <a href="#방명록" style={{ color: "#2878B5", textDecoration: "none" }}>
-            방명록
-          </a>
+          {[
+            ["소개", "#소개"],
+            ["게시판", "/"],
+            ["자캐", "#자캐"],
+            ["선후관", "#선후관"],
+            ["커미션", "#커미션"],
+            ["기록", "#기록"],
+            ["방명록", "#방명록"],
+          ].map(([name, link]) => (
+            <a
+              key={name}
+              href={link}
+              style={{
+                color: "#2878B5",
+                textDecoration: "none",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = "#F2C94C";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = "#2878B5";
+              }}
+            >
+              {name}
+            </a>
+          ))}
         </nav>
       </header>
 
