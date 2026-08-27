@@ -111,7 +111,30 @@ export default function Home() {
       </div>
     ))}
   </div>
-
+<div
+  id="art"
+  style={{
+    marginTop: "70px",
+  }}
+>
+  <div
+    style={{
+      width: "100%",
+      height: "280px",
+      background: "#FFFFFF",
+      borderRadius: "20px",
+      border: "1px solid #B9DFF5",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      color: "#5BB9E8",
+      fontSize: "14px",
+      overflow: "hidden",
+    }}
+  >
+    HEADER IMAGE
+  </div>
+</div>
     <section
   style={{
     maxWidth: "1100px",
