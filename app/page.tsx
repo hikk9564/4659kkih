@@ -45,15 +45,15 @@ export default function Home() {
   }}
 >
   <a href="/" style={{ color: "#2878B5", textDecoration: "none" }}>
-    엄
+    HOME
   </a>
 
   <a href="#about" style={{ color: "#2878B5", textDecoration: "none" }}>
-    요것도
+    ABOUT
   </a>
 
   <a href="#art" style={{ color: "#2878B5", textDecoration: "none" }}>
-    테스트용주저리
+    ART
   </a>
 </nav>
       </header>
