@@ -48,12 +48,21 @@ export default function Home() {
     HOME
   </a>
 
-  <a href="#about" style={{ color: "#2878B5", textDecoration: "none" }}>
-    ABOUT
+  <a href="#자캐" style={{ color: "#2878B5", textDecoration: "none" }}>
+    자캐
   </a>
 
-  <a href="#art" style={{ color: "#2878B5", textDecoration: "none" }}>
-    ART
+  <a href="#선후관" style={{ color: "#2878B5", textDecoration: "none" }}>
+    선후관
+  </a>
+  <a href="#커미션" style={{ color: "#2878B5", textDecoration: "none" }}>
+    커미션
+  </a>
+  <a href="#기록" style={{ color: "#2878B5", textDecoration: "none" }}>
+    기록
+  </a>
+  <a href="#방명록" style={{ color: "#2878B5", textDecoration: "none" }}>
+    방명록
   </a>
 </nav>
       </header>
