@@ -69,7 +69,49 @@ export default function Home() {
   </a>
 </nav>
       </header>
+<div
+  id="art"
+  style={{
+    marginTop: "70px",
+  }}
+>
+  <h2
+    style={{
+      fontSize: "24px",
+      fontWeight: "400",
+      marginBottom: "25px",
+    }}
+  >
+    ART
+  </h2>
 
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(3, 1fr)",
+      gap: "20px",
+    }}
+  >
+    {[1, 2, 3].map((item) => (
+      <div
+        key={item}
+        style={{
+          height: "260px",
+          background: "#EAF6FF",
+          border: "1px solid #B9DFF5",
+          borderRadius: "15px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#5BB9E8",
+          fontSize: "14px",
+        }}
+      >
+        ART {item}
+      </div>
+    ))}
+  </div>
+</div>
     <section
   style={{
     maxWidth: "1100px",
