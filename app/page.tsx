@@ -34,7 +34,7 @@ export default function Home() {
             opacity: 0.7,
           }}
         >
-          Welcome to my homepage.
+          힉힉이집
         </p>
         <nav
   style={{
