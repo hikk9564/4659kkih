@@ -38,12 +38,16 @@ export default function Home() {
         </p>
       </header>
 
-      <section
-        style={{
-          maxWidth: "1100px",
-          margin: "80px auto 0",
-        }}
-      >
+    <section
+  style={{
+    maxWidth: "1100px",
+    margin: "80px auto 0",
+    background: "#FFFFFF",
+    padding: "50px",
+    borderRadius: "20px",
+    boxShadow: "0 10px 30px rgba(40, 120, 181, 0.08)",
+  }}
+>
         <h2
           style={{
             fontSize: "24px",
