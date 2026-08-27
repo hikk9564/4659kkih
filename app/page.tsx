@@ -111,7 +111,7 @@ export default function Home() {
       </div>
     ))}
   </div>
-</div>
+
     <section
   style={{
     maxWidth: "1100px",
