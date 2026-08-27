@@ -44,6 +44,9 @@ export default function Home() {
     fontSize: "14px",
   }}
 >
+    <a href="#소개" style={{ color: "#2878B5", textDecoration: "none" }}>
+   소개
+  </a>
   <a href="/" style={{ color: "#2878B5", textDecoration: "none" }}>
     HOME
   </a>
