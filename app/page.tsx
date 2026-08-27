@@ -36,6 +36,26 @@ export default function Home() {
         >
           Welcome to my homepage.
         </p>
+        <nav
+  style={{
+    marginTop: "25px",
+    display: "flex",
+    gap: "28px",
+    fontSize: "14px",
+  }}
+>
+  <a href="/" style={{ color: "#2878B5", textDecoration: "none" }}>
+    엄
+  </a>
+
+  <a href="#about" style={{ color: "#2878B5", textDecoration: "none" }}>
+    요것도
+  </a>
+
+  <a href="#art" style={{ color: "#2878B5", textDecoration: "none" }}>
+    테스트용주저리
+  </a>
+</nav>
       </header>
 
     <section
