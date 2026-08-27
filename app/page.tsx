@@ -24,7 +24,7 @@ export default function Home() {
             letterSpacing: "-2px",
           }}
         >
-          O.HOME
+          hikk9564
         </h1>
 
         <p
