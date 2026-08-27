@@ -48,7 +48,7 @@ export default function Home() {
    소개
   </a>
   <a href="/" style={{ color: "#2878B5", textDecoration: "none" }}>
-    HOME
+    게시판
   </a>
 
   <a href="#자캐" style={{ color: "#2878B5", textDecoration: "none" }}>
