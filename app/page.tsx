@@ -54,7 +54,7 @@ export default function Home() {
             fontWeight: "400",
           }}
         >
-          Hello :)
+          테스트 0
         </h2>
 
         <p
@@ -63,9 +63,8 @@ export default function Home() {
             maxWidth: "600px",
           }}
         >
-          This is my little space on the internet.
-          <br />
-          I&apos;ll put my drawings, characters, and other things here.
+         테스트 1
+          <br />테스트 2
         </p>
       </section>
     </main>
