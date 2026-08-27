@@ -1,4 +1,4 @@
-export default function Home() {
+export default function About() {
   return (
     <main
       style={{
@@ -9,6 +9,8 @@ export default function Home() {
         fontFamily: "Arial, sans-serif",
       }}
     >
+      {/* ==================== 상단 ==================== */}
+
       <header
         style={{
           maxWidth: "1100px",
@@ -37,6 +39,7 @@ export default function Home() {
           힉힉이집
         </p>
 
+        {/* 상단 메뉴 */}
         <nav
           style={{
             marginTop: "25px",
@@ -45,18 +48,16 @@ export default function Home() {
             fontSize: "14px",
           }}
         >
-          {/* 소개 - 클릭하면 소개 페이지로 이동 */}
           <a
             href="/about"
             style={{
-              color: "#2878B5",
+              color: "#F2C94C",
               textDecoration: "none",
             }}
           >
             소개
           </a>
 
-          {/* 게시판 */}
           <a
             href="/"
             style={{
@@ -67,7 +68,6 @@ export default function Home() {
             게시판
           </a>
 
-          {/* 자캐 */}
           <a
             href="#자캐"
             style={{
@@ -78,7 +78,6 @@ export default function Home() {
             자캐
           </a>
 
-          {/* 선후관 */}
           <a
             href="#선후관"
             style={{
@@ -89,7 +88,6 @@ export default function Home() {
             선후관
           </a>
 
-          {/* 커미션 */}
           <a
             href="#커미션"
             style={{
@@ -100,7 +98,6 @@ export default function Home() {
             커미션
           </a>
 
-          {/* 기록 */}
           <a
             href="#기록"
             style={{
@@ -111,7 +108,6 @@ export default function Home() {
             기록
           </a>
 
-          {/* 방명록 */}
           <a
             href="#방명록"
             style={{
@@ -124,64 +120,143 @@ export default function Home() {
         </nav>
       </header>
 
-      {/* 헤더 이미지 영역 */}
+      {/* ==================== 소개 내용 ==================== */}
+
       <section
         style={{
           maxWidth: "1100px",
           margin: "70px auto 0",
         }}
       >
-        <div
-          style={{
-            width: "100%",
-            height: "280px",
-            background: "#FFFFFF",
-            border: "1px solid #B9DFF5",
-            borderRadius: "20px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#5BB9E8",
-            fontSize: "14px",
-            overflow: "hidden",
-          }}
-        >
-          {/* ✏️ 나중에 여기에 헤더 이미지를 넣을 예정 */}
-          HEADER IMAGE
-        </div>
-      </section>
-
-      {/* 소개 영역 */}
-      <section
-        style={{
-          maxWidth: "1100px",
-          margin: "50px auto 0",
-          background: "#FFFFFF",
-          padding: "50px",
-          borderRadius: "20px",
-          boxShadow: "0 10px 30px rgba(40, 120, 181, 0.08)",
-        }}
-      >
         <h2
           style={{
-            fontSize: "24px",
+            fontSize: "30px",
             fontWeight: "400",
+            marginBottom: "30px",
           }}
         >
-          테스트 0
+          ABOUT
         </h2>
 
-        <p
+        {/* 개인 소개 */}
+        <div
           style={{
-            lineHeight: "1.8",
-            maxWidth: "600px",
+            background: "#FFFFFF",
+            padding: "40px",
+            borderRadius: "20px",
+            border: "1px solid #B9DFF5",
+            marginBottom: "25px",
           }}
         >
-          {/* ✏️ 나중에 메인 화면에 들어갈 내용을 적으세요 */}
-          테스트 1
-          <br />
-          테스트 2
-        </p>
+          <h3
+            style={{
+              fontSize: "20px",
+              fontWeight: "400",
+              marginTop: 0,
+            }}
+          >
+            PROFILE
+          </h3>
+
+          <p
+            style={{
+              lineHeight: "1.8",
+              fontSize: "15px",
+            }}
+          >
+            {/* ✏️ 여기에 개인 소개를 작성하세요 */}
+            안녕하세요! 힉힉이입니다.
+            <br />
+            이곳은 그림과 자캐, 여러 가지 기록을 모아두는 개인 홈페이지입니다.
+          </p>
+        </div>
+
+        {/* SNS */}
+        <div
+          style={{
+            background: "#FFFFFF",
+            padding: "40px",
+            borderRadius: "20px",
+            border: "1px solid #B9DFF5",
+            marginBottom: "25px",
+          }}
+        >
+          <h3
+            style={{
+              fontSize: "20px",
+              fontWeight: "400",
+              marginTop: 0,
+            }}
+          >
+            SNS
+          </h3>
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+            }}
+          >
+            {/* ✏️ href="" 안에 SNS 주소를 입력하세요 */}
+            <a
+              href=""
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: "#2878B5",
+                textDecoration: "none",
+              }}
+            >
+              Twitter →
+            </a>
+
+            {/* ✏️ 필요 없는 SNS는 이 부분을 삭제하세요 */}
+            <a
+              href=""
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: "#2878B5",
+                textDecoration: "none",
+              }}
+            >
+              Instagram →
+            </a>
+          </div>
+        </div>
+
+        {/* 성향표 */}
+        <div
+          style={{
+            background: "#FFFFFF",
+            padding: "40px",
+            borderRadius: "20px",
+            border: "1px solid #B9DFF5",
+          }}
+        >
+          <h3
+            style={{
+              fontSize: "20px",
+              fontWeight: "400",
+              marginTop: 0,
+            }}
+          >
+            성향표
+          </h3>
+
+          <p
+            style={{
+              lineHeight: "1.8",
+              fontSize: "15px",
+            }}
+          >
+            {/* ✏️ 여기에 성향표 내용을 작성하세요 */}
+            그림 이야기와 자캐 이야기를 좋아합니다.
+            <br />
+            편하게 교류해주세요!
+          </p>
+        </div>
       </section>
     </main>
   );
