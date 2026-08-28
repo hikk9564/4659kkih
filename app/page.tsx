@@ -39,6 +39,7 @@ const handleImageUpload = async (
 
   try {
     const formData = new FormData();
+
     formData.append("file", file);
     formData.append("upload_preset", "homepage_upload");
 
@@ -49,6 +50,21 @@ const handleImageUpload = async (
         body: formData,
       }
     );
+
+    if (!response.ok) {
+      throw new Error("Cloudinary 업로드 실패");
+    }
+
+    const data = await response.json();
+
+    setImageUrl(data.secure_url);
+
+    alert("이미지가 변경되었습니다!");
+  } catch (error) {
+    console.error("이미지 업로드 실패:", error);
+    alert("이미지 업로드에 실패했습니다.");
+  }
+};
 
     if (!response.ok) {
       throw new Error("Cloudinary 업로드 실패");
