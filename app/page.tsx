@@ -88,7 +88,7 @@ export default function Home() {
           gap: "25px",
         }}
       >
-      {/* 이미지 1 */}
+    {/* 이미지 1 */}
 
 <div
   style={{
@@ -156,31 +156,6 @@ export default function Home() {
     </label>
   </div>
 </div>
-
-{/* 이미지 2 */}
-
-          {/* ✏️ 나중에 관리자 로그인 시에만 표시 */}
-          <div
-            style={{
-              padding: "12px 18px",
-              borderTop: "1px solid #EAF6FF",
-              textAlign: "right",
-            }}
-          >
-            <button
-              style={{
-                border: "none",
-                background: "transparent",
-                color: "#2878B5",
-                fontSize: "12px",
-                cursor: "pointer",
-              }}
-            >
-              이미지 변경
-            </button>
-          </div>
-        </div>
-
         {/* 이미지 2 */}
 
         <div
@@ -214,6 +189,20 @@ export default function Home() {
               borderTop: "1px solid #EAF6FF",
               textAlign: "right",
             }}
+                      >
+            <button
+              style={{
+                border: "none",
+                background: "transparent",
+                color: "#2878B5",
+                fontSize: "12px",
+                cursor: "pointer",
+              }}
+            >
+              이미지 변경
+            </button>
+          </div>
+        </div>
           >
             <button
               style={{
