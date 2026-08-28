@@ -9,6 +9,27 @@ import { storage, db } from "../lib/firebase";
 
 export default function Home() {
   const [imageUrl, setImageUrl] = useState("");
+  useEffect(() => {
+  const loadImage = async () => {
+    try {
+      const imageDoc = await getDoc(
+        doc(db, "homepage", "images")
+      );
+
+      if (imageDoc.exists()) {
+        const data = imageDoc.data();
+
+        if (data.image1) {
+          setImageUrl(data.image1);
+        }
+      }
+    } catch (error) {
+      console.error("이미지 불러오기 실패:", error);
+    }
+  };
+
+  loadImage();
+}, []);
 
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -25,6 +46,13 @@ export default function Home() {
       const url = await getDownloadURL(imageRef);
 
       setImageUrl(url);
+      await setDoc(
+  doc(db, "homepage", "images"),
+  {
+    image1: url,
+  },
+  { merge: true }
+);
 
       alert("이미지가 변경되었습니다!");
     } catch (error) {
