@@ -7,7 +7,15 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
 
 export default function Home() {
-  const [imageUrl, setImageUrl] = useState("");
+const [imageUrl, setImageUrl] = useState("");
+
+useEffect(() => {
+  const savedImage = localStorage.getItem("homepage-image1");
+
+  if (savedImage) {
+    setImageUrl(savedImage);
+  }
+}, []);
   const [imageUrl2, setImageUrl2] = useState("");
   useEffect(() => {
   const loadImages = async () => {
@@ -58,6 +66,7 @@ export default function Home() {
       const data = await response.json();
 
       setImageUrl(data.secure_url);
+      localStorage.setItem("homepage-image1", data.secure_url);
 
       alert("이미지가 변경되었습니다!");
     } catch (error) {
