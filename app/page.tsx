@@ -189,21 +189,8 @@ export default function Home() {
               borderTop: "1px solid #EAF6FF",
               textAlign: "right",
             }}
-                      >
-            <button
-              style={{
-                border: "none",
-                background: "transparent",
-                color: "#2878B5",
-                fontSize: "12px",
-                cursor: "pointer",
-              }}
-            >
-              이미지 변경
-            </button>
-          </div>
-        </div>
-          >
+               
+          
             <button
               style={{
                 border: "none",
