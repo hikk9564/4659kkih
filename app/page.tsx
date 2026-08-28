@@ -1,6 +1,10 @@
 "use client";
 
 import Navigation from "./components/Navigation";
+import LoginButton from "./components/LoginButton";
+"use client";
+
+import Navigation from "./components/Navigation";
 
 export default function Home() {
   return (
@@ -45,6 +49,7 @@ export default function Home() {
 
         {/* ✨ 상단 메뉴 */}
         <Navigation />
+        <LoginButton />
       </header>
 
       {/* ==================== MAIN ==================== */}
