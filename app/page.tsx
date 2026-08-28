@@ -7,6 +7,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export default function Home() {
   const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl2, setImageUrl2] = useState("");
 
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -41,6 +42,41 @@ export default function Home() {
     } catch (error) {
       console.error("이미지 업로드 실패:", error);
       alert("이미지 업로드에 실패했습니다.");
+    }
+  };
+    const handleImageUpload2 = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    try {
+      const formData = new FormData();
+
+      formData.append("file", file);
+      formData.append("upload_preset", "homepage_upload");
+
+      const response = await fetch(
+        "https://api.cloudinary.com/v1_1/nr7d0kyv/image/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Cloudinary 업로드 실패");
+      }
+
+      const data = await response.json();
+
+      setImageUrl2(data.secure_url);
+
+      alert("이미지 2가 변경되었습니다!");
+    } catch (error) {
+      console.error("이미지 2 업로드 실패:", error);
+      alert("이미지 2 업로드에 실패했습니다.");
     }
   };
 
@@ -192,7 +228,19 @@ export default function Home() {
               fontSize: "13px",
             }}
           >
-            이미지 2
+         {imageUrl2 ? (
+  <img
+    src={imageUrl2}
+    alt="홈페이지 이미지 2"
+    style={{
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+    }}
+  />
+) : (
+  "이미지 2"
+)}
           </div>
 
           {/* ✏️ 나중에 관리자 로그인 시에만 표시 */}
@@ -203,14 +251,21 @@ export default function Home() {
               textAlign: "right",
             }}
           >
-            <span
-              style={{
-                color: "#8AAFC5",
-                fontSize: "12px",
-              }}
-            >
-              이미지 변경
-            </span>
+          <label
+  style={{
+    color: "#2878B5",
+    fontSize: "12px",
+    cursor: "pointer",
+  }}
+>
+  이미지 변경
+  <input
+    type="file"
+    accept="image/*"
+    onChange={handleImageUpload2}
+    style={{ display: "none" }}
+  />
+</label>
           </div>
         </div>
         </section>
