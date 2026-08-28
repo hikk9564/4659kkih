@@ -191,17 +191,7 @@ export default function Home() {
             }}
                
           
-            <button
-              style={{
-                border: "none",
-                background: "transparent",
-                color: "#2878B5",
-                fontSize: "12px",
-                cursor: "pointer",
-              }}
-            >
-              이미지 변경
-            </button>
+      
           </div>
         </div>
       </section>
