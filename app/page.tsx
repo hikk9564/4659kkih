@@ -1,3 +1,4 @@
+```tsx
 "use client";
 
 import Navigation from "./components/Navigation";
@@ -49,18 +50,125 @@ export default function Home() {
         <LoginButton />
       </header>
 
+      {/* ==================== IMAGE AREA ==================== */}
+
+      <section
+        style={{
+          maxWidth: "1100px",
+          margin: "45px auto 0",
+          display: "grid",
+          gridTemplateColumns: "repeat(2, 1fr)",
+          gap: "25px",
+        }}
+      >
+        {/* 이미지 1 */}
+
+        <div
+          style={{
+            background: "#FFFFFF",
+            border: "1px solid #B9DFF5",
+            borderRadius: "20px",
+            overflow: "hidden",
+            boxShadow: "0 10px 30px rgba(40, 120, 181, 0.08)",
+            animation: "fadeUp 0.5s ease-out both",
+          }}
+        >
+          <div
+            style={{
+              height: "280px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "#F5FBFF",
+              color: "#8AAFC5",
+              fontSize: "13px",
+            }}
+          >
+            이미지 1
+          </div>
+
+          {/* ✏️ 나중에 관리자 로그인 시에만 표시 */}
+          <div
+            style={{
+              padding: "12px 18px",
+              borderTop: "1px solid #EAF6FF",
+              textAlign: "right",
+            }}
+          >
+            <button
+              style={{
+                border: "none",
+                background: "transparent",
+                color: "#2878B5",
+                fontSize: "12px",
+                cursor: "pointer",
+              }}
+            >
+              이미지 변경
+            </button>
+          </div>
+        </div>
+
+        {/* 이미지 2 */}
+
+        <div
+          style={{
+            background: "#FFFFFF",
+            border: "1px solid #B9DFF5",
+            borderRadius: "20px",
+            overflow: "hidden",
+            boxShadow: "0 10px 30px rgba(40, 120, 181, 0.08)",
+            animation: "fadeUp 0.5s ease-out 0.1s both",
+          }}
+        >
+          <div
+            style={{
+              height: "280px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "#F5FBFF",
+              color: "#8AAFC5",
+              fontSize: "13px",
+            }}
+          >
+            이미지 2
+          </div>
+
+          {/* ✏️ 나중에 관리자 로그인 시에만 표시 */}
+          <div
+            style={{
+              padding: "12px 18px",
+              borderTop: "1px solid #EAF6FF",
+              textAlign: "right",
+            }}
+          >
+            <button
+              style={{
+                border: "none",
+                background: "transparent",
+                color: "#2878B5",
+                fontSize: "12px",
+                cursor: "pointer",
+              }}
+            >
+              이미지 변경
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* ==================== MAIN ==================== */}
 
       <section
         style={{
           maxWidth: "1100px",
-          margin: "70px auto 0",
+          margin: "35px auto 0",
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
           gap: "25px",
         }}
       >
-
         {/* ==================== 방명록 ==================== */}
 
         <section
@@ -69,11 +177,8 @@ export default function Home() {
             padding: "35px",
             borderRadius: "20px",
             border: "1px solid #B9DFF5",
-            boxShadow:
-              "0 10px 30px rgba(40, 120, 181, 0.08)",
-
-            /* ✨ 살짝 올라오는 효과 */
-            animation: "fadeUp 0.5s ease-out both",
+            boxShadow: "0 10px 30px rgba(40, 120, 181, 0.08)",
+            animation: "fadeUp 0.5s ease-out 0.15s both",
           }}
         >
           <h2
@@ -97,8 +202,6 @@ export default function Home() {
               marginBottom: "25px",
             }}
           >
-            {/* ✏️ 나중에 실제 방명록 데이터가 들어갑니다 */}
-
             {[1, 2, 3, 4, 5].map((item) => (
               <div
                 key={item}
@@ -117,12 +220,7 @@ export default function Home() {
                   {item % 2 === 0 ? "익명" : "힉힉"}
                 </strong>
 
-                <span
-                  style={{
-                    opacity: 0.8,
-                  }}
-                >
-                  {/* ✏️ 나중에 실제 방명록 내용으로 교체됩니다 */}
+                <span style={{ opacity: 0.8 }}>
                   안녕하세요! 홈페이지 구경하고 갑니다.
                 </span>
               </div>
@@ -137,8 +235,6 @@ export default function Home() {
               paddingTop: "25px",
             }}
           >
-            {/* 닉네임 */}
-
             <div
               style={{
                 display: "flex",
@@ -151,9 +247,7 @@ export default function Home() {
               <label>
                 <input
                   type="checkbox"
-                  style={{
-                    marginRight: "5px",
-                  }}
+                  style={{ marginRight: "5px" }}
                 />
                 익명
               </label>
@@ -171,8 +265,6 @@ export default function Home() {
               />
             </div>
 
-            {/* 내용 */}
-
             <textarea
               placeholder="방명록을 입력하세요"
               style={{
@@ -188,8 +280,6 @@ export default function Home() {
                 outline: "none",
               }}
             />
-
-            {/* 비밀번호 + 등록 */}
 
             <div
               style={{
@@ -225,8 +315,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 전체 방명록 */}
-
           <a
             href="/guestbook"
             style={{
@@ -250,11 +338,8 @@ export default function Home() {
             padding: "35px",
             borderRadius: "20px",
             border: "1px solid #B9DFF5",
-            boxShadow:
-              "0 10px 30px rgba(40, 120, 181, 0.08)",
-
-            /* ✨ 방명록보다 살짝 늦게 나타남 */
-            animation: "fadeUp 0.5s ease-out 0.1s both",
+            boxShadow: "0 10px 30px rgba(40, 120, 181, 0.08)",
+            animation: "fadeUp 0.5s ease-out 0.2s both",
           }}
         >
           <h2
@@ -268,11 +353,7 @@ export default function Home() {
             DIARY
           </h2>
 
-          {/* 최신 다이어리 2개 */}
-
           <div>
-            {/* ✏️ 나중에 실제 다이어리 데이터가 들어갑니다 */}
-
             {[1, 2].map((item) => (
               <a
                 key={item}
@@ -296,15 +377,10 @@ export default function Home() {
                   ●
                 </span>
 
-                {/* ✏️ 나중에 실제 다이어리 제목으로 교체됩니다 */}
-                {item === 1
-                  ? "오늘의 그림"
-                  : "비 오는 날"}
+                {item === 1 ? "오늘의 그림" : "비 오는 날"}
               </a>
             ))}
           </div>
-
-          {/* 전체 다이어리 */}
 
           <a
             href="/diary"
@@ -346,3 +422,5 @@ export default function Home() {
     </main>
   );
 }
+```
+
