@@ -4,7 +4,6 @@ import Navigation from "./components/Navigation";
 import LoginButton from "./components/LoginButton";
 import { useEffect, useState } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { firestore } from "../lib/firebase";
 
 export default function Home() {
   const [imageUrl, setImageUrl] = useState("");
