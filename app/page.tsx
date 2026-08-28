@@ -5,81 +5,37 @@ import LoginButton from "./components/LoginButton";
 import { useEffect, useState } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
-
 export default function Home() {
   const [imageUrl, setImageUrl] = useState("");
-  useEffect(() => {
-  const loadImage = async () => {
+
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
     try {
-      const imageDoc = await getDoc(
-        doc(db, "homepage", "images")
+      const formData = new FormData();
+
+      formData.append("file", file);
+      formData.append("upload_preset", "homepage_upload");
+
+      const response = await fetch(
+        "https://api.cloudinary.com/v1_1/nr7d0kyv/image/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
       );
 
-      if (imageDoc.exists()) {
-        const data = imageDoc.data();
-
-        if (data.image1) {
-          setImageUrl(data.image1);
-        }
+      if (!response.ok) {
+        throw new Error("Cloudinary 업로드 실패");
       }
-    } catch (error) {
-      console.error("이미지 불러오기 실패:", error);
-    }
-  };
 
-  loadImage();
-}, []);
+      const data = await response.json();
 
-const handleImageUpload = async (
-  event: React.ChangeEvent<HTMLInputElement>
-) => {
-  const file = event.target.files?.[0];
-
-  if (!file) return;
-
-  try {
-    const formData = new FormData();
-
-    formData.append("file", file);
-    formData.append("upload_preset", "homepage_upload");
-
-    const response = await fetch(
-      "https://api.cloudinary.com/v1_1/nr7d0kyv/image/upload",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Cloudinary 업로드 실패");
-    }
-
-    const data = await response.json();
-
-    setImageUrl(data.secure_url);
-
-    alert("이미지가 변경되었습니다!");
-  } catch (error) {
-    console.error("이미지 업로드 실패:", error);
-    alert("이미지 업로드에 실패했습니다.");
-  }
-};
-
-    if (!response.ok) {
-      throw new Error("Cloudinary 업로드 실패");
-    }
-
-    const data = await response.json();
-
-    setImageUrl(data.secure_url);
-
-    alert("이미지가 변경되었습니다!");
-  } catch (error) {
-    console.error("이미지 업로드 실패:", error);
-    alert("이미지 업로드에 실패했습니다.");
-  }
-};
+      setImageUrl(data.secure_url);
 
       alert("이미지가 변경되었습니다!");
     } catch (error) {
@@ -89,6 +45,7 @@ const handleImageUpload = async (
   };
 
   return (
+
     <main
       style={{
         minHeight: "100vh",
