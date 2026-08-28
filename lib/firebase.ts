@@ -18,11 +18,10 @@ const app = initializeApp(firebaseConfig);
 // 기존 Realtime Database
 export const database = getDatabase(app);
 
-// Google 로그인
-export const auth = getAuth(app);
+
 // Google 로그인에 사용하는 인증 설정
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
-export const googleProvider = new GoogleAuthProvider();
+
 
 
