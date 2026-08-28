@@ -4,10 +4,31 @@ import Navigation from "./components/Navigation";
 import LoginButton from "./components/LoginButton";
 import { useEffect, useState } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "../lib/firebase";
 
 export default function Home() {
   const [imageUrl, setImageUrl] = useState("");
   const [imageUrl2, setImageUrl2] = useState("");
+  useEffect(() => {
+  const loadImages = async () => {
+    try {
+      const imageDoc = await getDoc(
+        doc(db, "homepage", "images")
+      );
+
+      if (imageDoc.exists()) {
+        const data = imageDoc.data();
+
+        setImageUrl(data.image1 || "");
+        setImageUrl2(data.image2 || "");
+      }
+    } catch (error) {
+      console.error("이미지 불러오기 실패:", error);
+    }
+  };
+
+  loadImages();
+}, []);
 
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
