@@ -3,9 +3,8 @@
 import Navigation from "./components/Navigation";
 import LoginButton from "./components/LoginButton";
 import { useEffect, useState } from "react";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { storage, db } from "../lib/firebase";
+
 
 export default function Home() {
   const [imageUrl, setImageUrl] = useState("");
@@ -31,28 +30,40 @@ export default function Home() {
   loadImage();
 }, []);
 
-  const handleImageUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
+const handleImageUpload = async (
+  event: React.ChangeEvent<HTMLInputElement>
+) => {
+  const file = event.target.files?.[0];
 
-    if (!file) return;
+  if (!file) return;
 
-    try {
-      const imageRef = ref(storage, `homepage/image1-${Date.now()}`);
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "homepage_upload");
 
-      await uploadBytes(imageRef, file);
+    const response = await fetch(
+      "https://api.cloudinary.com/v1_1/nr7d0kyv/image/upload",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
 
-      const url = await getDownloadURL(imageRef);
+    if (!response.ok) {
+      throw new Error("Cloudinary 업로드 실패");
+    }
 
-      setImageUrl(url);
-      await setDoc(
-  doc(db, "homepage", "images"),
-  {
-    image1: url,
-  },
-  { merge: true }
-);
+    const data = await response.json();
+
+    setImageUrl(data.secure_url);
+
+    alert("이미지가 변경되었습니다!");
+  } catch (error) {
+    console.error("이미지 업로드 실패:", error);
+    alert("이미지 업로드에 실패했습니다.");
+  }
+};
 
       alert("이미지가 변경되었습니다!");
     } catch (error) {
