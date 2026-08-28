@@ -189,12 +189,17 @@ export default function Home() {
               borderTop: "1px solid #EAF6FF",
               textAlign: "right",
             }}
-               
-          
-      
-   
+          >
+            <span
+              style={{
+                color: "#8AAFC5",
+                fontSize: "12px",
+              }}
+            >
+              이미지 변경
+            </span>
+          </div>
         </div>
-      </section>
 
       {/* ==================== MAIN ==================== */}
 
