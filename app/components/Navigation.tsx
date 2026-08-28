@@ -33,11 +33,11 @@ const menus = [
     href: "#",
     items: ["메뉴 이름 1", "메뉴 이름 2", "메뉴 이름 3"],
   },
-  {
-    name: "방명록",
-    href: "#",
-    items: ["메뉴 이름 1", "메뉴 이름 2", "메뉴 이름 3"],
-  },
+{
+  name: "방명록",
+  href: "/guestbook",
+  items: [],
+},
 ];
 
 export default function Navigation() {
@@ -88,8 +88,8 @@ export default function Navigation() {
           </a>
 
           {/* 하위 메뉴 */}
-          {openMenu === menu.name && (
-            <div
+        {openMenu === menu.name && menu.items.length > 0 && (
+  <div
               style={{
                 position: "absolute",
                 top: "34px",
