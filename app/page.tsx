@@ -2,8 +2,36 @@
 
 import Navigation from "./components/Navigation";
 import LoginButton from "./components/LoginButton";
+import { useState } from "react";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../lib/firebase";
 
 export default function Home() {
+  const [imageUrl, setImageUrl] = useState("");
+
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    try {
+      const imageRef = ref(storage, `homepage/image1-${Date.now()}`);
+
+      await uploadBytes(imageRef, file);
+
+      const url = await getDownloadURL(imageRef);
+
+      setImageUrl(url);
+
+      alert("이미지가 변경되었습니다!");
+    } catch (error) {
+      console.error("이미지 업로드 실패:", error);
+      alert("이미지 업로드에 실패했습니다.");
+    }
+  };
+
   return (
     <main
       style={{
@@ -60,31 +88,76 @@ export default function Home() {
           gap: "25px",
         }}
       >
-        {/* 이미지 1 */}
+      {/* 이미지 1 */}
 
-        <div
-          style={{
-            background: "#FFFFFF",
-            border: "1px solid #B9DFF5",
-            borderRadius: "20px",
-            overflow: "hidden",
-            boxShadow: "0 10px 30px rgba(40, 120, 181, 0.08)",
-            animation: "fadeUp 0.5s ease-out both",
-          }}
-        >
-          <div
-            style={{
-              height: "280px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "#F5FBFF",
-              color: "#8AAFC5",
-              fontSize: "13px",
-            }}
-          >
-            이미지 1
-          </div>
+<div
+  style={{
+    background: "#FFFFFF",
+    border: "1px solid #B9DFF5",
+    borderRadius: "20px",
+    overflow: "hidden",
+    boxShadow: "0 10px 30px rgba(40, 120, 181, 0.08)",
+    animation: "fadeUp 0.5s ease-out both",
+  }}
+>
+  <div
+    style={{
+      height: "280px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "#F5FBFF",
+      overflow: "hidden",
+    }}
+  >
+    {imageUrl ? (
+      <img
+        src={imageUrl}
+        alt="홈페이지 이미지 1"
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+        }}
+      />
+    ) : (
+      <span
+        style={{
+          color: "#8AAFC5",
+          fontSize: "13px",
+        }}
+      >
+        이미지 1
+      </span>
+    )}
+  </div>
+
+  <div
+    style={{
+      padding: "12px 18px",
+      borderTop: "1px solid #EAF6FF",
+      textAlign: "right",
+    }}
+  >
+    <label
+      style={{
+        color: "#2878B5",
+        fontSize: "12px",
+        cursor: "pointer",
+      }}
+    >
+      이미지 변경
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleImageUpload}
+        style={{ display: "none" }}
+      />
+    </label>
+  </div>
+</div>
+
+{/* 이미지 2 */}
 
           {/* ✏️ 나중에 관리자 로그인 시에만 표시 */}
           <div
