@@ -1,10 +1,9 @@
 "use client";
 
-import Navigation from "./components/Navigation";
-import LoginButton from "./components/LoginButton";
 "use client";
 
 import Navigation from "./components/Navigation";
+import LoginButton from "./components/LoginButton";
 
 export default function Home() {
   return (
