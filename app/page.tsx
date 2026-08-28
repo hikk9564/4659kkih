@@ -2,9 +2,10 @@
 
 import Navigation from "./components/Navigation";
 import LoginButton from "./components/LoginButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "../lib/firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { storage, db } from "../lib/firebase";
 
 export default function Home() {
   const [imageUrl, setImageUrl] = useState("");
