@@ -1,4 +1,3 @@
-```tsx
 "use client";
 
 import Navigation from "./components/Navigation";
@@ -11,7 +10,8 @@ export default function Home() {
   const [imageUrl, setImageUrl] = useState("");
   const [imageUrl2, setImageUrl2] = useState("");
 
-  // 저장된 이미지 불러오기
+  // ==================== 저장된 이미지 불러오기 ====================
+
   useEffect(() => {
     const loadImages = async () => {
       try {
@@ -33,7 +33,8 @@ export default function Home() {
     loadImages();
   }, []);
 
-  // 이미지 1 업로드
+  // ==================== 이미지 1 업로드 ====================
+
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -64,7 +65,6 @@ export default function Home() {
 
       setImageUrl(url);
 
-      // Firestore에 이미지 주소 저장
       await setDoc(
         doc(db, "homepage", "images"),
         {
@@ -80,7 +80,8 @@ export default function Home() {
     }
   };
 
-  // 이미지 2 업로드
+  // ==================== 이미지 2 업로드 ====================
+
   const handleImageUpload2 = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -111,7 +112,6 @@ export default function Home() {
 
       setImageUrl2(url);
 
-      // Firestore에 이미지 주소 저장
       await setDoc(
         doc(db, "homepage", "images"),
         {
@@ -126,6 +126,8 @@ export default function Home() {
       alert("이미지 2 업로드에 실패했습니다.");
     }
   };
+
+  // ==================== 화면 ====================
 
   return (
     <main
@@ -192,13 +194,11 @@ export default function Home() {
             overflow: "hidden",
             boxShadow:
               "0 10px 30px rgba(40, 120, 181, 0.08)",
-            animation: "fadeUp 0.5s ease-out both",
           }}
         >
           <div
             style={{
-            aspectRatio: "16 / 9",
-
+              aspectRatio: "16 / 9",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -214,6 +214,7 @@ export default function Home() {
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
+                  display: "block",
                 }}
               />
             ) : (
@@ -264,14 +265,11 @@ export default function Home() {
             overflow: "hidden",
             boxShadow:
               "0 10px 30px rgba(40, 120, 181, 0.08)",
-            animation:
-              "fadeUp 0.5s ease-out 0.1s both",
           }}
         >
           <div
             style={{
-         aspectRatio: "16 / 9",
-
+              aspectRatio: "16 / 9",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -287,6 +285,7 @@ export default function Home() {
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
+                  display: "block",
                 }}
               />
             ) : (
@@ -349,8 +348,6 @@ export default function Home() {
             border: "1px solid #B9DFF5",
             boxShadow:
               "0 10px 30px rgba(40, 120, 181, 0.08)",
-            animation:
-              "fadeUp 0.5s ease-out 0.15s both",
           }}
         >
           <h2
@@ -508,8 +505,6 @@ export default function Home() {
             border: "1px solid #B9DFF5",
             boxShadow:
               "0 10px 30px rgba(40, 120, 181, 0.08)",
-            animation:
-              "fadeUp 0.5s ease-out 0.2s both",
           }}
         >
           <h2
@@ -569,11 +564,7 @@ export default function Home() {
           </a>
         </section>
       </section>
-
-      {/* ==================== ANIMATION ==================== */}
-
     </main>
   );
 }
-
 
