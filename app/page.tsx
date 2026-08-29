@@ -471,12 +471,57 @@ const [isAnonymous, setIsAnonymous] = useState(false);
                 익명
               </label>
 
-              <input
-                type="text"
-                placeholder="닉네임"
-                value={guestName}
-onChange={(e) => setGuestName(e.target.value)}
-                <textarea
+            <div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    marginBottom: "12px",
+    fontSize: "13px",
+  }}
+>
+  <label>
+    <input
+      type="checkbox"
+      checked={isAnonymous}
+      onChange={(e) => setIsAnonymous(e.target.checked)}
+      style={{ marginRight: "5px" }}
+    />
+    익명
+  </label>
+
+  <input
+    type="text"
+    placeholder="닉네임"
+    value={guestName}
+    onChange={(e) => setGuestName(e.target.value)}
+    style={{
+      flex: 1,
+      border: "1px solid #B9DFF5",
+      borderRadius: "8px",
+      padding: "8px 10px",
+      outline: "none",
+    }}
+  />
+</div>
+
+<textarea
+  placeholder="방명록을 입력하세요"
+  value={guestMessage}
+  onChange={(e) => setGuestMessage(e.target.value)}
+  style={{
+    width: "100%",
+    height: "75px",
+    boxSizing: "border-box",
+    resize: "none",
+    border: "1px solid #B9DFF5",
+    borderRadius: "10px",
+    padding: "10px",
+    fontFamily: "inherit",
+    fontSize: "13px",
+    outline: "none",
+  }}
+/>
   placeholder="방명록을 입력하세요"
   value={guestMessage}
   onChange={(e) => setGuestMessage(e.target.value)}
