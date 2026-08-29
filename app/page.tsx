@@ -28,7 +28,7 @@ export default function Home() {
   const [guestPassword, setGuestPassword] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [guestbookList, setGuestbookList] = useState<any[]>([]);
-  const [guestbookList, setGuestbookList] = useState<any[]>([]);
+
 
   // ==================== 저장된 이미지 불러오기 ====================
 
