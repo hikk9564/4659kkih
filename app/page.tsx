@@ -28,6 +28,7 @@ export default function Home() {
   const [guestPassword, setGuestPassword] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [guestbookList, setGuestbookList] = useState<any[]>([]);
+  const [guestbookList, setGuestbookList] = useState<any[]>([]);
 
   // ==================== 저장된 이미지 불러오기 ====================
 
@@ -189,13 +190,22 @@ export default function Home() {
     }
 
     try {
-      await addDoc(collection(db, "guestbook"), {
-        name: isAnonymous ? "익명" : guestName,
-        message: guestMessage,
-        password: guestPassword,
-        createdAt: serverTimestamp(),
-      });
+    const newDoc = await addDoc(collection(db, "guestbook"), {
+  name: isAnonymous ? "익명" : guestName,
+  message: guestMessage,
+  password: guestPassword,
+  createdAt: serverTimestamp(),
+});
 
+setGuestbookList((prev) => [
+  {
+    id: newDoc.id,
+    name: isAnonymous ? "익명" : guestName,
+    message: guestMessage,
+    createdAt: new Date(),
+  },
+  ...prev,
+].slice(0, 5));
       setGuestName("");
       setGuestMessage("");
       setGuestPassword("");
@@ -474,6 +484,8 @@ export default function Home() {
       {item.message}
     </span>
   </div>
+            ))}
+</div>
 ))}
           </div>
 
