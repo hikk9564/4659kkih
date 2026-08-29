@@ -3,6 +3,8 @@
 import Navigation from "./components/Navigation";
 import LoginButton from "./components/LoginButton";
 import { useEffect, useState } from "react";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { auth } from "../lib/firebase";
 import {
   doc,
   getDoc,
@@ -21,6 +23,12 @@ export default function Home() {
   const [imageUrl, setImageUrl] = useState("");
 
   const [guestName, setGuestName] = useState("");
+  const ADMIN_EMAIL = "hyoeunzz09@gmail.com";
+
+const [user, setUser] = useState<User | null>(null);
+const [imageText, setImageText] = useState("이미지 변경");
+const [editingImageText, setEditingImageText] = useState(false);
+const [newImageText, setNewImageText] = useState("");
   const [guestMessage, setGuestMessage] = useState("");
   const [guestPassword, setGuestPassword] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
