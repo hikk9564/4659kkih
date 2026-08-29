@@ -453,7 +453,6 @@ setGuestbookList((prev) => [
           </h2>
 
           {/* 최근 방명록 - 임시 화면 */}
-
           <div
             style={{
               height: "240px",
@@ -462,33 +461,31 @@ setGuestbookList((prev) => [
               marginBottom: "25px",
             }}
           >
-          {guestbookList.map((item) => (
-  <div
-    key={item.id}
-    style={{
-      padding: "12px 0",
-      borderBottom: "1px solid #EAF6FF",
-      fontSize: "14px",
-    }}
-  >
-    <strong
-      style={{
-        fontWeight: "500",
-        marginRight: "8px",
-      }}
-    >
-      {item.name}
-    </strong>
+            {guestbookList.map((item) => (
+              <div
+                key={item.id}
+                style={{
+                  padding: "12px 0",
+                  borderBottom: "1px solid #EAF6FF",
+                  fontSize: "14px",
+                }}
+              >
+                <strong
+                  style={{
+                    fontWeight: "500",
+                    marginRight: "8px",
+                  }}
+                >
+                  {item.name}
+                </strong>
 
-    <span style={{ opacity: 0.8 }}>
-      {item.message}
-    </span>
-  </div>
+                <span style={{ opacity: 0.8 }}>
+                  {item.message}
+                </span>
+              </div>
             ))}
-</div>
-
           </div>
-
+       
           {/* ==================== 방명록 입력 ==================== */}
 
           <div
