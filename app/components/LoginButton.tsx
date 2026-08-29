@@ -10,6 +10,8 @@ import {
 
 import { auth, googleProvider } from "../../lib/firebase";
 
+const ADMIN_EMAIL = "hyoeunzz09@gmail.com";
+
 export default function LoginButton() {
   const [user, setUser] = useState<User | null>(null);
 
