@@ -197,7 +197,7 @@ const [newImageText, setNewImageText] = useState("");
         minHeight: "100vh",
         background: "#EAF6FF",
         color: "#234A68",
-        padding: "60px",
+        padding: "60px 5%",
         fontFamily: "Arial, sans-serif",
       }}
     >
@@ -415,15 +415,17 @@ const [newImageText, setNewImageText] = useState("");
 
       {/* ==================== MAIN ==================== */}
 
-      <section
-        style={{
-          maxWidth: "1100px",
-          margin: "35px auto 0",
-          display: "grid",
-          gridTemplateColumns: "1fr",
-          gap: "25px",
-        }}
-      >
+    <section
+  style={{
+    width: "100%",
+    maxWidth: "1100px",
+    margin: "35px auto 0",
+    display: "grid",
+    gridTemplateColumns: "1fr",
+    gap: "25px",
+    boxSizing: "border-box",
+  }}
+>
         {/* ==================== 방명록 ==================== */}
 
         <section
