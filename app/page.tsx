@@ -41,7 +41,7 @@ const [newImageText, setNewImageText] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [guestbookList, setGuestbookList] = useState<any[]>([]);
 
-  // ==================== 이미지 불러오기 ====================
+  // ==================== 저장된 이미지 불러오기 ====================
 
   useEffect(() => {
     const loadImages = async () => {
@@ -52,21 +52,13 @@ const [newImageText, setNewImageText] = useState("");
 
         if (imageDoc.exists()) {
           const data = imageDoc.data();
+
           setImageUrl(data.image1 || "");
-            setImageText(data.imageText || "이미지 변경");
-}
         }
       } catch (error) {
         console.error("이미지 불러오기 실패:", error);
       }
     };
-    useEffect(() => {
-  const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-    setUser(currentUser);
-  });
-
-  return () => unsubscribe();
-}, []);
 
     loadImages();
   }, []);
