@@ -525,7 +525,7 @@ export default function Home() {
             {[1, 2].map((item) => (
               <a
                 key={item}
-                href={`/diary/${item}`}
+                href={"/diary/" + item}
                 style={{
                   display: "block",
                   padding: "15px 5px",
