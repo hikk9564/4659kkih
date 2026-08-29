@@ -9,6 +9,10 @@ import {
   setDoc,
   collection,
   addDoc,
+  getDocs,
+  query,
+  orderBy,
+  limit,
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
