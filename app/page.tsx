@@ -18,8 +18,6 @@ import {
 import { db } from "../lib/firebase";
 
 export default function Home() {
-  // ==================== 상태 ====================
-
   const [imageUrl, setImageUrl] = useState("");
 
   const [guestName, setGuestName] = useState("");
@@ -28,8 +26,7 @@ export default function Home() {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [guestbookList, setGuestbookList] = useState<any[]>([]);
 
-
-  // ==================== 저장된 이미지 불러오기 ====================
+  // ==================== 이미지 불러오기 ====================
 
   useEffect(() => {
     const loadImages = async () => {
@@ -40,9 +37,7 @@ export default function Home() {
 
         if (imageDoc.exists()) {
           const data = imageDoc.data();
-
           setImageUrl(data.image1 || "");
-      
         }
       } catch (error) {
         console.error("이미지 불러오기 실패:", error);
@@ -51,32 +46,35 @@ export default function Home() {
 
     loadImages();
   }, []);
+
+  // ==================== 방명록 불러오기 ====================
+
   useEffect(() => {
-  const loadGuestbook = async () => {
-    try {
-      const q = query(
-        collection(db, "guestbook"),
-        orderBy("createdAt", "desc"),
-        limit(3)
-      );
+    const loadGuestbook = async () => {
+      try {
+        const q = query(
+          collection(db, "guestbook"),
+          orderBy("createdAt", "desc"),
+          limit(3)
+        );
 
-      const snapshot = await getDocs(q);
+        const snapshot = await getDocs(q);
 
-      const list = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+        const list = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
 
-      setGuestbookList(list);
-    } catch (error) {
-      console.error("방명록 불러오기 실패:", error);
-    }
-  };
+        setGuestbookList(list);
+      } catch (error) {
+        console.error("방명록 불러오기 실패:", error);
+      }
+    };
 
-  loadGuestbook();
-}, []);
+    loadGuestbook();
+  }, []);
 
-  // ==================== 이미지 1 업로드 ====================
+  // ==================== 이미지 업로드 ====================
 
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -123,7 +121,6 @@ export default function Home() {
     }
   };
 
-
   // ==================== 방명록 등록 ====================
 
   const handleGuestbookSubmit = async () => {
@@ -143,22 +140,30 @@ export default function Home() {
     }
 
     try {
-    const newDoc = await addDoc(collection(db, "guestbook"), {
-  name: isAnonymous ? "익명" : guestName,
-  message: guestMessage,
-  password: guestPassword,
-  createdAt: serverTimestamp(),
-});
+      const name = isAnonymous ? "익명" : guestName;
 
-setGuestbookList((prev) => [
-  {
-    id: newDoc.id,
-    name: isAnonymous ? "익명" : guestName,
-    message: guestMessage,
-    createdAt: new Date(),
-  },
-  ...prev,
-].slice(0, 5));
+      const newDoc = await addDoc(
+        collection(db, "guestbook"),
+        {
+          name,
+          message: guestMessage,
+          password: guestPassword,
+          createdAt: serverTimestamp(),
+        }
+      );
+
+      setGuestbookList((prev) =>
+        [
+          {
+            id: newDoc.id,
+            name,
+            message: guestMessage,
+            createdAt: new Date(),
+          },
+          ...prev,
+        ].slice(0, 3)
+      );
+
       setGuestName("");
       setGuestMessage("");
       setGuestPassword("");
@@ -217,19 +222,14 @@ setGuestbookList((prev) => [
         <LoginButton />
       </header>
 
-      {/* ==================== IMAGE AREA ==================== */}
+      {/* ==================== 이미지 ==================== */}
 
       <section
         style={{
           maxWidth: "1100px",
           margin: "45px auto 0",
-          display: "grid",
-          gridTemplateColumns: "1fr",
-          gap: "25px",
         }}
       >
-        {/* ==================== 이미지 1 ==================== */}
-
         <div
           style={{
             background: "#FFFFFF",
@@ -253,7 +253,7 @@ setGuestbookList((prev) => [
             {imageUrl ? (
               <img
                 src={imageUrl}
-                alt="홈페이지 이미지 1"
+                alt="홈페이지 이미지"
                 style={{
                   width: "100%",
                   height: "100%",
@@ -268,7 +268,7 @@ setGuestbookList((prev) => [
                   fontSize: "13px",
                 }}
               >
-                이미지 1
+                이미지
               </span>
             )}
           </div>
@@ -298,7 +298,7 @@ setGuestbookList((prev) => [
             </label>
           </div>
         </div>
-
+      </section>
 
       {/* ==================== MAIN ==================== */}
 
@@ -334,40 +334,53 @@ setGuestbookList((prev) => [
             방명록
           </h2>
 
-          {/* 최근 방명록 - 임시 화면 */}
+          {/* 최근 방명록 3개 */}
+
           <div
             style={{
-              height: "240px",
+              minHeight: "120px",
               overflowY: "auto",
               paddingRight: "8px",
               marginBottom: "25px",
             }}
           >
-            {guestbookList.map((item) => (
-              <div
-                key={item.id}
+            {guestbookList.length === 0 ? (
+              <p
                 style={{
-                  padding: "12px 0",
-                  borderBottom: "1px solid #EAF6FF",
-                  fontSize: "14px",
+                  fontSize: "13px",
+                  opacity: 0.5,
+                  margin: 0,
                 }}
               >
-                <strong
+                아직 방명록이 없습니다.
+              </p>
+            ) : (
+              guestbookList.map((item) => (
+                <div
+                  key={item.id}
                   style={{
-                    fontWeight: "500",
-                    marginRight: "8px",
+                    padding: "12px 0",
+                    borderBottom: "1px solid #EAF6FF",
+                    fontSize: "14px",
                   }}
                 >
-                  {item.name}
-                </strong>
+                  <strong
+                    style={{
+                      fontWeight: "500",
+                      marginRight: "8px",
+                    }}
+                  >
+                    {item.name}
+                  </strong>
 
-                <span style={{ opacity: 0.8 }}>
-                  {item.message}
-                </span>
-              </div>
-            ))}
+                  <span style={{ opacity: 0.8 }}>
+                    {item.message}
+                  </span>
+                </div>
+              ))
+            )}
           </div>
-       
+
           {/* ==================== 방명록 입력 ==================== */}
 
           <div
@@ -376,8 +389,6 @@ setGuestbookList((prev) => [
               paddingTop: "25px",
             }}
           >
-            {/* 닉네임 + 익명 */}
-
             <div
               style={{
                 display: "flex",
@@ -420,8 +431,6 @@ setGuestbookList((prev) => [
               />
             </div>
 
-            {/* 방명록 내용 */}
-
             <textarea
               placeholder="방명록을 입력하세요"
               value={guestMessage}
@@ -441,8 +450,6 @@ setGuestbookList((prev) => [
                 outline: "none",
               }}
             />
-
-            {/* 비밀번호 + 등록 */}
 
             <div
               style={{
@@ -570,6 +577,3 @@ setGuestbookList((prev) => [
     </main>
   );
 }
-
-
-
