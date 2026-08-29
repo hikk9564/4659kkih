@@ -572,25 +572,6 @@ export default function Home() {
 
       {/* ==================== ANIMATION ==================== */}
 
-<style jsx>{`
-  @keyframes fadeUp {
-    from {
-      opacity: 0;
-      transform: translateY(15px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @media (max-width: 700px) {
-    main {
-      padding: 30px !important;
-    }
-  }
-`}</style>
     </main>
   );
 }
