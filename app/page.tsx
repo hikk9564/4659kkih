@@ -4,7 +4,7 @@ import Navigation from "./components/Navigation";
 import LoginButton from "./components/LoginButton";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
-import { auth } from "../lib/firebase";
+
 import {
   doc,
   getDoc,
@@ -17,17 +17,14 @@ import {
   limit,
   serverTimestamp,
 } from "firebase/firestore";
-import { db } from "../lib/firebase";
-import { auth } from "../lib/firebase";
-import { onAuthStateChanged, User } from "firebase/auth";
+import {db,auth } from "../lib/firebase";
+
 
 export default function Home() {
   const [imageUrl, setImageUrl] = useState("");
-  const [user, setUser] = useState<User | null>(null);
 
-  const [imageText, setImageText] = useState("이미지 변경");
-const [editingImageText, setEditingImageText] = useState(false);
-const [newImageText, setNewImageText] = useState("");
+
+
 
   const [guestName, setGuestName] = useState("");
   const ADMIN_EMAIL = "hyoeunzz09@gmail.com";
