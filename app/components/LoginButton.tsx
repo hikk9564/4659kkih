@@ -38,7 +38,7 @@ export default function LoginButton() {
     }
   };
 
-  if (user) {
+if (user && user.email === ADMIN_EMAIL) {
     return (
       <div
         style={{
