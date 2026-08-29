@@ -197,7 +197,8 @@ export default function Home() {
         >
           <div
             style={{
-              height: "280px",
+            aspectRatio: "16 / 9",
+
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -269,7 +270,8 @@ export default function Home() {
         >
           <div
             style={{
-              height: "280px",
+         aspectRatio: "16 / 9",
+
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
