@@ -21,7 +21,6 @@ export default function Home() {
   // ==================== 상태 ====================
 
   const [imageUrl, setImageUrl] = useState("");
-  const [imageUrl2, setImageUrl2] = useState("");
 
   const [guestName, setGuestName] = useState("");
   const [guestMessage, setGuestMessage] = useState("");
@@ -43,7 +42,7 @@ export default function Home() {
           const data = imageDoc.data();
 
           setImageUrl(data.image1 || "");
-          setImageUrl2(data.image2 || "");
+      
         }
       } catch (error) {
         console.error("이미지 불러오기 실패:", error);
@@ -58,7 +57,7 @@ export default function Home() {
       const q = query(
         collection(db, "guestbook"),
         orderBy("createdAt", "desc"),
-        limit(5)
+        limit(3)
       );
 
       const snapshot = await getDocs(q);
@@ -124,52 +123,6 @@ export default function Home() {
     }
   };
 
-  // ==================== 이미지 2 업로드 ====================
-
-  const handleImageUpload2 = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-
-    if (!file) return;
-
-    try {
-      const formData = new FormData();
-
-      formData.append("file", file);
-      formData.append("upload_preset", "homepage_upload");
-
-      const response = await fetch(
-        "https://api.cloudinary.com/v1_1/nr7d0kyv/image/upload",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Cloudinary 업로드 실패");
-      }
-
-      const data = await response.json();
-      const url = data.secure_url;
-
-      setImageUrl2(url);
-
-      await setDoc(
-        doc(db, "homepage", "images"),
-        {
-          image2: url,
-        },
-        { merge: true }
-      );
-
-      alert("이미지 2가 변경되었습니다!");
-    } catch (error) {
-      console.error("이미지 2 업로드 실패:", error);
-      alert("이미지 2 업로드에 실패했습니다.");
-    }
-  };
 
   // ==================== 방명록 등록 ====================
 
@@ -271,7 +224,7 @@ setGuestbookList((prev) => [
           maxWidth: "1100px",
           margin: "45px auto 0",
           display: "grid",
-          gridTemplateColumns: "repeat(2, 1fr)",
+          gridTemplateColumns: "1fr",
           gap: "25px",
         }}
       >
@@ -346,77 +299,6 @@ setGuestbookList((prev) => [
           </div>
         </div>
 
-        {/* ==================== 이미지 2 ==================== */}
-
-        <div
-          style={{
-            background: "#FFFFFF",
-            border: "1px solid #B9DFF5",
-            borderRadius: "20px",
-            overflow: "hidden",
-            boxShadow:
-              "0 10px 30px rgba(40, 120, 181, 0.08)",
-          }}
-        >
-          <div
-            style={{
-              aspectRatio: "16 / 9",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "#F5FBFF",
-              overflow: "hidden",
-            }}
-          >
-            {imageUrl2 ? (
-              <img
-                src={imageUrl2}
-                alt="홈페이지 이미지 2"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  display: "block",
-                }}
-              />
-            ) : (
-              <span
-                style={{
-                  color: "#8AAFC5",
-                  fontSize: "13px",
-                }}
-              >
-                이미지 2
-              </span>
-            )}
-          </div>
-
-          <div
-            style={{
-              padding: "12px 18px",
-              borderTop: "1px solid #EAF6FF",
-              textAlign: "right",
-            }}
-          >
-            <label
-              style={{
-                color: "#2878B5",
-                fontSize: "12px",
-                cursor: "pointer",
-              }}
-            >
-              이미지 변경
-
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload2}
-                style={{ display: "none" }}
-              />
-            </label>
-          </div>
-        </div>
-      </section>
 
       {/* ==================== MAIN ==================== */}
 
@@ -425,7 +307,7 @@ setGuestbookList((prev) => [
           maxWidth: "1100px",
           margin: "35px auto 0",
           display: "grid",
-          gridTemplateColumns: "1fr 1fr",
+          gridTemplateColumns: "1fr",
           gap: "25px",
         }}
       >
@@ -612,7 +494,7 @@ setGuestbookList((prev) => [
               textAlign: "right",
             }}
           >
-            전체 방명록 보기 →
+            전체 방명록 →
           </a>
         </section>
 
