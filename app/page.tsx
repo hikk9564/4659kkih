@@ -23,6 +23,7 @@ export default function Home() {
   const [guestMessage, setGuestMessage] = useState("");
   const [guestPassword, setGuestPassword] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const [guestbookList, setGuestbookList] = useState<any[]>([]);
 
   // ==================== 저장된 이미지 불러오기 ====================
 
@@ -46,6 +47,30 @@ export default function Home() {
 
     loadImages();
   }, []);
+  useEffect(() => {
+  const loadGuestbook = async () => {
+    try {
+      const q = query(
+        collection(db, "guestbook"),
+        orderBy("createdAt", "desc"),
+        limit(5)
+      );
+
+      const snapshot = await getDocs(q);
+
+      const list = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setGuestbookList(list);
+    } catch (error) {
+      console.error("방명록 불러오기 실패:", error);
+    }
+  };
+
+  loadGuestbook();
+}, []);
 
   // ==================== 이미지 1 업로드 ====================
 
@@ -423,29 +448,29 @@ export default function Home() {
               marginBottom: "25px",
             }}
           >
-            {[1, 2, 3, 4, 5].map((item) => (
-              <div
-                key={item}
-                style={{
-                  padding: "12px 0",
-                  borderBottom: "1px solid #EAF6FF",
-                  fontSize: "14px",
-                }}
-              >
-                <strong
-                  style={{
-                    fontWeight: "500",
-                    marginRight: "8px",
-                  }}
-                >
-                  {item % 2 === 0 ? "익명" : "힉힉"}
-                </strong>
+          {guestbookList.map((item) => (
+  <div
+    key={item.id}
+    style={{
+      padding: "12px 0",
+      borderBottom: "1px solid #EAF6FF",
+      fontSize: "14px",
+    }}
+  >
+    <strong
+      style={{
+        fontWeight: "500",
+        marginRight: "8px",
+      }}
+    >
+      {item.name}
+    </strong>
 
-                <span style={{ opacity: 0.8 }}>
-                  안녕하세요! 홈페이지 구경하고 갑니다.
-                </span>
-              </div>
-            ))}
+    <span style={{ opacity: 0.8 }}>
+      {item.message}
+    </span>
+  </div>
+))}
           </div>
 
           {/* ==================== 방명록 입력 ==================== */}
