@@ -18,9 +18,16 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import { auth } from "../lib/firebase";
+import { onAuthStateChanged, User } from "firebase/auth";
 
 export default function Home() {
   const [imageUrl, setImageUrl] = useState("");
+  const [user, setUser] = useState<User | null>(null);
+
+  const [imageText, setImageText] = useState("이미지 변경");
+const [editingImageText, setEditingImageText] = useState(false);
+const [newImageText, setNewImageText] = useState("");
 
   const [guestName, setGuestName] = useState("");
   const ADMIN_EMAIL = "hyoeunzz09@gmail.com";
@@ -46,11 +53,20 @@ const [newImageText, setNewImageText] = useState("");
         if (imageDoc.exists()) {
           const data = imageDoc.data();
           setImageUrl(data.image1 || "");
+            setImageText(data.imageText || "이미지 변경");
+}
         }
       } catch (error) {
         console.error("이미지 불러오기 실패:", error);
       }
     };
+    useEffect(() => {
+  const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    setUser(currentUser);
+  });
+
+  return () => unsubscribe();
+}, []);
 
     loadImages();
   }, []);
@@ -281,29 +297,129 @@ const [newImageText, setNewImageText] = useState("");
             )}
           </div>
 
-          <div
-            style={{
-              padding: "12px 18px",
-              borderTop: "1px solid #EAF6FF",
-              textAlign: "right",
-            }}
-          >
-            <label
-              style={{
-                color: "#2878B5",
-                fontSize: "12px",
-                cursor: "pointer",
-              }}
-            >
-              이미지 변경
+        <div
+  style={{
+    padding: "12px 18px",
+    borderTop: "1px solid #EAF6FF",
+    textAlign: "right",
+  }}
+>
+  <span
+    style={{
+      color: "#2878B5",
+      fontSize: "12px",
+    }}
+  >
+    {imageText}
+  </span>
 
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                style={{ display: "none" }}
-              />
-            </label>
+<span
+  style={{
+    color: "#2878B5",
+    fontSize: "12px",
+  }}
+>
+  {imageText}
+</span>
+
+{user?.email === "hyoeunzz09@gmail.com" && (
+  <>
+    {editingImageText ? (
+      <>
+        <input
+          type="text"
+          value={newImageText}
+          onChange={(e) => setNewImageText(e.target.value)}
+          style={{
+            marginLeft: "10px",
+            border: "1px solid #B9DFF5",
+            borderRadius: "8px",
+            padding: "6px 10px",
+            fontSize: "12px",
+            outline: "none",
+            width: "200px",
+          }}
+        />
+
+        <button
+          onClick={async () => {
+            const text = newImageText.trim();
+
+            if (!text) {
+              alert("문구를 입력해주세요.");
+              return;
+            }
+
+            try {
+              await setDoc(
+                doc(db, "homepage", "images"),
+                {
+                  imageText: text,
+                },
+                { merge: true }
+              );
+
+              setImageText(text);
+              setEditingImageText(false);
+
+              alert("문구가 변경되었습니다!");
+            } catch (error) {
+              console.error("문구 변경 실패:", error);
+              alert("문구 변경에 실패했습니다.");
+            }
+          }}
+          style={{
+            marginLeft: "8px",
+            border: "none",
+            background: "#2878B5",
+            color: "#FFFFFF",
+            borderRadius: "8px",
+            padding: "6px 10px",
+            fontSize: "12px",
+            cursor: "pointer",
+          }}
+        >
+          저장
+        </button>
+      </>
+    ) : (
+      <button
+        onClick={() => {
+          setNewImageText(imageText);
+          setEditingImageText(true);
+        }}
+        style={{
+          marginLeft: "10px",
+          border: "none",
+          background: "transparent",
+          color: "#2878B5",
+          fontSize: "12px",
+          cursor: "pointer",
+        }}
+      >
+        문구 변경
+      </button>
+    )}
+
+    <label
+      style={{
+        marginLeft: "10px",
+        color: "#2878B5",
+        fontSize: "12px",
+        cursor: "pointer",
+      }}
+    >
+      이미지 변경
+
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleImageUpload}
+        style={{ display: "none" }}
+      />
+    </label>
+  </>
+)}
           </div>
         </div>
       </section>
