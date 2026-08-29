@@ -1,3 +1,4 @@
+```tsx
 "use client";
 
 import Navigation from "./components/Navigation";
@@ -9,21 +10,20 @@ import {
   setDoc,
   collection,
   addDoc,
-  getDocs,
-  query,
-  orderBy,
-  limit,
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
 
 export default function Home() {
+  // ==================== 상태 ====================
+
   const [imageUrl, setImageUrl] = useState("");
   const [imageUrl2, setImageUrl2] = useState("");
+
   const [guestName, setGuestName] = useState("");
-const [guestMessage, setGuestMessage] = useState("");
-const [guestPassword, setGuestPassword] = useState("");
-const [isAnonymous, setIsAnonymous] = useState(false);
+  const [guestMessage, setGuestMessage] = useState("");
+  const [guestPassword, setGuestPassword] = useState("");
+  const [isAnonymous, setIsAnonymous] = useState(false);
 
   // ==================== 저장된 이미지 불러오기 ====================
 
@@ -70,43 +70,6 @@ const [isAnonymous, setIsAnonymous] = useState(false);
           body: formData,
         }
       );
-        // ==================== 방명록 등록 ====================
-
-  const handleGuestbookSubmit = async () => {
-    if (!guestMessage.trim()) {
-      alert("방명록 내용을 입력해주세요.");
-      return;
-    }
-
-    if (!isAnonymous && !guestName.trim()) {
-      alert("닉네임을 입력해주세요.");
-      return;
-    }
-
-    if (!guestPassword.trim()) {
-      alert("비밀번호를 입력해주세요.");
-      return;
-    }
-
-    try {
-      await addDoc(collection(db, "guestbook"), {
-        name: isAnonymous ? "익명" : guestName,
-        message: guestMessage,
-        password: guestPassword,
-        createdAt: serverTimestamp(),
-      });
-
-      setGuestName("");
-      setGuestMessage("");
-      setGuestPassword("");
-      setIsAnonymous(false);
-
-      alert("방명록이 등록되었습니다!");
-    } catch (error) {
-      console.error("방명록 등록 실패:", error);
-      alert("방명록 등록에 실패했습니다.");
-    }
-  };
 
       if (!response.ok) {
         throw new Error("Cloudinary 업로드 실패");
@@ -176,6 +139,44 @@ const [isAnonymous, setIsAnonymous] = useState(false);
     } catch (error) {
       console.error("이미지 2 업로드 실패:", error);
       alert("이미지 2 업로드에 실패했습니다.");
+    }
+  };
+
+  // ==================== 방명록 등록 ====================
+
+  const handleGuestbookSubmit = async () => {
+    if (!guestMessage.trim()) {
+      alert("방명록 내용을 입력해주세요.");
+      return;
+    }
+
+    if (!isAnonymous && !guestName.trim()) {
+      alert("닉네임을 입력해주세요.");
+      return;
+    }
+
+    if (!guestPassword.trim()) {
+      alert("비밀번호를 입력해주세요.");
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, "guestbook"), {
+        name: isAnonymous ? "익명" : guestName,
+        message: guestMessage,
+        password: guestPassword,
+        createdAt: serverTimestamp(),
+      });
+
+      setGuestName("");
+      setGuestMessage("");
+      setGuestPassword("");
+      setIsAnonymous(false);
+
+      alert("방명록이 등록되었습니다!");
+    } catch (error) {
+      console.error("방명록 등록 실패:", error);
+      alert("방명록 등록에 실패했습니다.");
     }
   };
 
@@ -413,6 +414,8 @@ const [isAnonymous, setIsAnonymous] = useState(false);
             방명록
           </h2>
 
+          {/* 최근 방명록 - 임시 화면 */}
+
           <div
             style={{
               height: "240px",
@@ -446,12 +449,16 @@ const [isAnonymous, setIsAnonymous] = useState(false);
             ))}
           </div>
 
+          {/* ==================== 방명록 입력 ==================== */}
+
           <div
             style={{
               borderTop: "1px solid #B9DFF5",
               paddingTop: "25px",
             }}
           >
+            {/* 닉네임 + 익명 */}
+
             <div
               style={{
                 display: "flex",
@@ -462,94 +469,46 @@ const [isAnonymous, setIsAnonymous] = useState(false);
               }}
             >
               <label>
-             <input
-  type="checkbox"
-  checked={isAnonymous}
-  onChange={(e) => setIsAnonymous(e.target.checked)}
-  style={{ marginRight: "5px" }}
-/>
+                <input
+                  type="checkbox"
+                  checked={isAnonymous}
+                  onChange={(e) =>
+                    setIsAnonymous(e.target.checked)
+                  }
+                  style={{ marginRight: "5px" }}
+                />
                 익명
               </label>
 
-            <div
-  style={{
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    marginBottom: "12px",
-    fontSize: "13px",
-  }}
->
-  <label>
-    <input
-      type="checkbox"
-      checked={isAnonymous}
-      onChange={(e) => setIsAnonymous(e.target.checked)}
-      style={{ marginRight: "5px" }}
-    />
-    익명
-  </label>
-
-  <input
-    type="text"
-    placeholder="닉네임"
-    value={guestName}
-    onChange={(e) => setGuestName(e.target.value)}
-    style={{
-      flex: 1,
-      border: "1px solid #B9DFF5",
-      borderRadius: "8px",
-      padding: "8px 10px",
-      outline: "none",
-    }}
-  />
-</div>
-
-<textarea
-  placeholder="방명록을 입력하세요"
-  value={guestMessage}
-  onChange={(e) => setGuestMessage(e.target.value)}
-  style={{
-    width: "100%",
-    height: "75px",
-    boxSizing: "border-box",
-    resize: "none",
-    border: "1px solid #B9DFF5",
-    borderRadius: "10px",
-    padding: "10px",
-    fontFamily: "inherit",
-    fontSize: "13px",
-    outline: "none",
-  }}
-/>
-  placeholder="방명록을 입력하세요"
-  value={guestMessage}
-  onChange={(e) => setGuestMessage(e.target.value)}
-  style={{
-    width: "100%",
-    height: "75px",
-    boxSizing: "border-box",
-    resize: "none",
-    border: "1px solid #B9DFF5",
-    borderRadius: "10px",
-    padding: "10px",
-    fontFamily: "inherit",
-    fontSize: "13px",
-    outline: "none",
-  }}
-/>
+              <input
+                type="text"
+                placeholder="닉네임"
+                value={guestName}
+                disabled={isAnonymous}
+                onChange={(e) =>
+                  setGuestName(e.target.value)
+                }
                 style={{
                   flex: 1,
                   border: "1px solid #B9DFF5",
                   borderRadius: "8px",
                   padding: "8px 10px",
                   outline: "none",
+                  background: isAnonymous
+                    ? "#F5F5F5"
+                    : "#FFFFFF",
                 }}
               />
             </div>
 
+            {/* 방명록 내용 */}
+
             <textarea
               placeholder="방명록을 입력하세요"
+              value={guestMessage}
+              onChange={(e) =>
+                setGuestMessage(e.target.value)
+              }
               style={{
                 width: "100%",
                 height: "75px",
@@ -564,6 +523,8 @@ const [isAnonymous, setIsAnonymous] = useState(false);
               }}
             />
 
+            {/* 비밀번호 + 등록 */}
+
             <div
               style={{
                 display: "flex",
@@ -575,7 +536,9 @@ const [isAnonymous, setIsAnonymous] = useState(false);
                 type="password"
                 placeholder="비밀번호"
                 value={guestPassword}
-onChange={(e) => setGuestPassword(e.target.value)}
+                onChange={(e) =>
+                  setGuestPassword(e.target.value)
+                }
                 style={{
                   flex: 1,
                   border: "1px solid #B9DFF5",
@@ -586,7 +549,7 @@ onChange={(e) => setGuestPassword(e.target.value)}
               />
 
               <button
-                  onClick={handleGuestbookSubmit}
+                onClick={handleGuestbookSubmit}
                 style={{
                   border: "none",
                   background: "#2878B5",
@@ -688,4 +651,6 @@ onChange={(e) => setGuestPassword(e.target.value)}
     </main>
   );
 }
+```
+
 
