@@ -41,7 +41,7 @@ export default function CalendarPage() {
             opacity: 0.7,
           }}
         >
-          나의 기록과 일정을 한눈에
+          개인 일정 및 다이어리
         </p>
 
         <Navigation />
