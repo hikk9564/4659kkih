@@ -24,7 +24,7 @@ const menus = [
     items: ["메뉴 이름 1", "메뉴 이름 2", "메뉴 이름 3"],
   },
   {
-  {
+
   name: "캘린더",
   href: "/calendar",
   items: [],
