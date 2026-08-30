@@ -179,61 +179,58 @@ const lastDate = new Date(year, month + 1, 0).getDate();
   }}
 >
   {Array.from({
-  length: firstDay + lastDate,
-}).map((_, index) => {
-  const day = index - firstDay + 1;
+    length: firstDay + lastDate,
+  }).map((_, index) => {
+    const day = index - firstDay + 1;
 
-  if (day < 1) {
-    return <div key={index} />;
-  }
+    if (day < 1) {
+      return <div key={index} />;
+    }
 
-  const date = new Date(year, month, day);
+    const date = new Date(year, month, day);
 
-  const isToday =
-    date.toDateString() ===
-    new Date().toDateString();
+    const isToday =
+      date.toDateString() ===
+      new Date().toDateString();
 
-  const isSelected =
-    selectedDate?.toDateString() ===
-    date.toDateString();
+    const isSelected =
+      selectedDate?.toDateString() ===
+      date.toDateString();
 
-  return (
-    <button
-      key={index}
-      onClick={() => setSelectedDate(date)}
-      style={{
-        minHeight: "80px",
-        border: "none",
-        background: isSelected
-          ? "#FFF8D9"
-          : "#FFFFFF",
-        color: "#234A68",
-        fontSize: "14px",
-        fontWeight: isToday
-          ? "700"
-          : "400",
-        cursor: "pointer",
-        padding: "10px",
-        textAlign: "left",
-        transition:
-          "background 0.2s ease",
-      }}
-    >
-      {day}
-
-      <div
+    return (
+      <button
+        key={index}
+        onClick={() => setSelectedDate(date)}
         style={{
-          marginTop: "8px",
-          fontSize: "10px",
-          color: "#5BB9E8",
+          minHeight: "80px",
+          border: "none",
+          background: isSelected
+            ? "#FFF8D9"
+            : "#FFFFFF",
+          color: "#234A68",
+          fontSize: "14px",
+          fontWeight: isToday ? "700" : "400",
+          cursor: "pointer",
+          padding: "10px",
+          textAlign: "left",
+          transition: "background 0.2s ease",
         }}
       >
-        {/* 나중에 일기/일정 표시 */}
-      </div>
-    </button>
-  );
-})}
+        {day}
 
+        <div
+          style={{
+            marginTop: "8px",
+            fontSize: "10px",
+            color: "#5BB9E8",
+          }}
+        >
+          {/* 나중에 일기/일정 표시 */}
+        </div>
+      </button>
+    );
+  })}
+</div>
         </div>
 
         {/* ==================== 선택한 날짜 ==================== */}
