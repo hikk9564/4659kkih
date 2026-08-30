@@ -92,6 +92,11 @@ const lastDate = new Date(year, month + 1, 0).getDate();
             }}
           >
             <button
+              onClick={() =>
+  setCurrentDate(
+    new Date(year, month - 1, 1)
+  )
+}
               style={{
                 border: "none",
                 background: "transparent",
@@ -123,6 +128,11 @@ const lastDate = new Date(year, month + 1, 0).getDate();
             >
               →
             </button>
+            onClick={() =>
+  setCurrentDate(
+    new Date(year, month + 1, 1)
+  )
+}
           </div>
 
           {/* ==================== 요일 ==================== */}
@@ -223,40 +233,7 @@ const lastDate = new Date(year, month + 1, 0).getDate();
     </button>
   );
 })}
-   => (
-    <button
-      key={index}
-      onClick={() => setSelectedDate(index)}
-      style={{
-        minHeight: "80px",
-        border: "none",
-        background:
-          selectedDate === index
-            ? "#FFF8D9"
-            : "#FFFFFF",
-        color: "#234A68",
-        fontSize: "14px",
-        cursor: "pointer",
-        padding: "10px",
-        textAlign: "left",
-        transition: "background 0.2s ease",
-      }}
-    >
-      {day}
 
-      {/* 나중에 일기/일정 표시 */}
-      <div
-        style={{
-          marginTop: "8px",
-          fontSize: "10px",
-          color: "#5BB9E8",
-        }}
-      >
-        {/* ● */}
-      </div>
-    </button>
-  ))}
-</div>
         </div>
 
         {/* ==================== 선택한 날짜 ==================== */}
