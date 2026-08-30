@@ -361,293 +361,91 @@ const [diaryContent, setDiaryContent] =
             ))}
           </div>
 
-          {/* ==================== 날짜 ==================== */}
+   ```tsx
+{/* ==================== 날짜 ==================== */}
 
-          <div>
-            {weeks.map(
-              (week, weekIndex) => {
-                const weekStart =
-                  week.find(
-                    (day) =>
-                      day !== null
-                  );
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns:
+      "repeat(7, minmax(0, 1fr))",
+  }}
+>
+  {Array.from({
+    length: firstDay + lastDate,
+  }).map((_, index) => {
+    const day = index - firstDay + 1;
 
-                const weekEnd =
-                  [...week]
-                    .reverse()
-                    .find(
-                      (day) =>
-                        day !== null
-                    );
+    if (day < 1) {
+      return <div key={index} />;
+    }
 
-                return (
-                  <div
-                    key={weekIndex}
-                    style={{
-                      position:
-                        "relative",
-                      display: "grid",
-                      gridTemplateColumns:
-                        "repeat(7, minmax(0, 1fr))",
-                      minHeight: "80px",
-                    }}
-                  >
-                    {/* 날짜 */}
+    const date = new Date(year, month, day);
 
-                    {week.map(
-                      (day, dayIndex) => {
-                        if (
-                          day === null
-                        ) {
-                          return (
-                            <div
-                              key={
-                                dayIndex
-                              }
-                              style={{
-                                minHeight:
-                                  "80px",
-                              }}
-                            />
-                          );
-                        }
+    const isToday =
+      date.toDateString() ===
+      new Date().toDateString();
 
-                        const date =
-                          new Date(
-                            year,
-                            month,
-                            day
-                          );
+    const isSelected =
+      selectedDate?.toDateString() ===
+      date.toDateString();
 
-                        const dateString =
-                          makeDateString(
-                            year,
-                            month,
-                            day
-                          );
-
-                        const isToday =
-                          date.toDateString() ===
-                          new Date().toDateString();
-
-                        const isSelected =
-                          selectedDate?.toDateString() ===
-                          date.toDateString();
-
-                        return (
-                          <button
-                            key={
-                              dayIndex
-                            }
-                            onClick={() =>
-                              setSelectedDate(
-                                date
-                              )
-                            }
-                            style={{
-                              minHeight:
-                                "80px",
-                              border:
-                                "none",
-                              background:
-                                isSelected
-                                  ? "#FFF8D9"
-                                  : "#FFFFFF",
-                              color:
-                                "#234A68",
-                              fontSize:
-                                "14px",
-                              fontWeight:
-                                isToday
-                                  ? "700"
-                                  : "400",
-                              cursor:
-                                "pointer",
-                              padding:
-                                "10px",
-                              textAlign:
-                                "left",
-                              position:
-                                "relative",
-                              zIndex: 2,
-                            }}
-                          >
-                            {day}
-
-                            {/* 일정 시작일의 제목 */}
-
-                            {schedules
-                              .filter(
-                                (
-                                  schedule
-                                ) => {
-                                  const startsHere =
-                                    schedule.start ===
-                                    dateString;
-
-                                  const monthStart =
-                                    day ===
-                                    1;
-
-                                  const continuesFromPreviousMonth =
-                                    schedule.start <
-                                      dateString &&
-                                    schedule.end >=
-                                      dateString;
-
-                                  return (
-                                    startsHere ||
-                                    (monthStart &&
-                                      continuesFromPreviousMonth)
-                                  );
-                                }
-                              )
-                              .map(
-                                (
-                                  schedule
-                                ) => (
-                                  <div
-                                    key={
-                                      schedule.id
-                                    }
-                                    style={{
-                                      marginTop:
-                                        "8px",
-                                      fontSize:
-                                        "10px",
-                                      color:
-                                        "#2878B5",
-                                      position:
-                                        "relative",
-                                      zIndex: 3,
-                                      whiteSpace:
-                                        "nowrap",
-                                      overflow:
-                                        "hidden",
-                                      textOverflow:
-                                        "ellipsis",
-                                    }}
-                                  >
-                                    {schedule.title}
-                                  </div>
-                                )
-                              )}
-                          </button>
-                        );
-                      }
-                    )}
-
-                    {/* ==================== 일정 막대 ==================== */}
-
-                    {schedules.map(
-                      (schedule) => {
-                        const visibleStart =
-                          Math.max(
-                            weekStart ?? 1,
-                            Number(
-                              schedule.start.slice(
-                                8,
-                                10
-                              )
-                            )
-                          );
-
-                        const visibleEnd =
-                          Math.min(
-                            weekEnd ?? lastDate,
-                            Number(
-                              schedule.end.slice(
-                                8,
-                                10
-                              )
-                            )
-                          );
-
-                        const scheduleStartDate =
-                          new Date(
-                            schedule.start
-                          );
-
-                        const scheduleEndDate =
-                          new Date(
-                            schedule.end
-                          );
-
-                        const weekStartDate =
-                          new Date(
-                            year,
-                            month,
-                            weekStart ?? 1
-                          );
-
-                        const weekEndDate =
-                          new Date(
-                            year,
-                            month,
-                            weekEnd ?? lastDate
-                          );
-
-                        if (
-                          scheduleEndDate <
-                            weekStartDate ||
-                          scheduleStartDate >
-                            weekEndDate
-                        ) {
-                          return null;
-                        }
-
-                        const startColumn =
-                          Math.max(
-                            0,
-                            week.findIndex(
-                              (day) =>
-                                day ===
-                                visibleStart
-                            )
-                          );
-
-                        const endColumn =
-                          Math.max(
-                            startColumn,
-                            week.findIndex(
-                              (day) =>
-                                day ===
-                                visibleEnd
-                            )
-                          );
-
-                        return (
-                          <div
-                            key={
-                              schedule.id
-                            }
-                            style={{
-                              position:
-                                "absolute",
-                              left: `calc(${startColumn} * (100% / 7) + 5px)`,
-                              width: `calc(${endColumn - startColumn + 1} * (100% / 7) - 10px)`,
-                              top: "42px",
-                              height:
-                                "18px",
-                              background:
-                                "#FFF3A8",
-                              borderRadius:
-                                "5px",
-                              zIndex: 1,
-                              pointerEvents:
-                                "none",
-                              opacity: 0.85,
-                            }}
-                          />
-                        );
-                      }
-                    )}
-                  </div>
-                );
-              }
-            )}
-          </div>
+    return (
+      <button
+        key={index}
+        onClick={() => setSelectedDate(date)}
+        style={{
+          minHeight: "80px",
+          border: "none",
+          background: isSelected
+            ? "#FFF8D9"
+            : "#FFFFFF",
+          color: "#234A68",
+          fontSize: "14px",
+          fontWeight: isToday ? "700" : "400",
+          cursor: "pointer",
+          padding: "10px",
+          textAlign: "left",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        {/* 날짜 */}
+        <div>
+          {day}
         </div>
+
+        {/* ==================== 일정 ==================== */}
+
+        {/* 나중에 Firebase에서 실제 일정 데이터를 가져오면
+            이 부분에 일정 막대가 표시됩니다. */}
+
+        <div
+          style={{
+            marginTop: "8px",
+            height: "8px",
+            borderRadius: "4px",
+            background: "transparent",
+          }}
+        />
+
+        {/* ==================== 일기 아이콘 자리 ==================== */}
+
+        <div
+          style={{
+            position: "absolute",
+            right: "8px",
+            bottom: "7px",
+            fontSize: "13px",
+          }}
+        >
+          {/* 일기가 있는 날에는 여기에 아이콘 표시 */}
+        </div>
+      </button>
+    );
+  })}
+</div>
+
 
         {/* ==================== 선택한 날짜 ==================== */}
 
