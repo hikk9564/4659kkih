@@ -26,6 +26,25 @@ export default function Home() {
   const [imageUrl, setImageUrl] = useState("");
   const [imageText, setImageText] = useState("이미지 변경");
 
+  // ==================== 자기소개 / SNS ====================
+
+const [introText, setIntroText] = useState(
+  "여기에 자기소개를 작성하세요."
+);
+
+const [twitterUrl, setTwitterUrl] = useState("#");
+const [youtubeUrl, setYoutubeUrl] = useState("#");
+const [crepeUrl, setCrepeUrl] = useState("#");
+
+const [editingIntro, setEditingIntro] = useState(false);
+const [editingSNS, setEditingSNS] = useState(false);
+
+const [newIntroText, setNewIntroText] = useState("");
+
+const [newTwitterUrl, setNewTwitterUrl] = useState("");
+const [newYoutubeUrl, setNewYoutubeUrl] = useState("");
+const [newCrepeUrl, setNewCrepeUrl] = useState("");
+
   const [user, setUser] = useState<User | null>(null);
 
   const ADMIN_EMAIL = "hyoeunzz09@gmail.com";
@@ -82,6 +101,45 @@ export default function Home() {
     };
 
     loadImages();
+  }, []);
+    // ==================== 자기소개 / SNS 불러오기 ====================
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const profileDoc = await getDoc(
+          doc(db, "homepage", "profile")
+        );
+
+        if (profileDoc.exists()) {
+          const data = profileDoc.data();
+
+          setIntroText(
+            data.introText ||
+              "여기에 자기소개를 작성하세요."
+          );
+
+          setTwitterUrl(
+            data.twitterUrl || "#"
+          );
+
+          setYoutubeUrl(
+            data.youtubeUrl || "#"
+          );
+
+          setCrepeUrl(
+            data.crepeUrl || "#"
+          );
+        }
+      } catch (error) {
+        console.error(
+          "자기소개/SNS 불러오기 실패:",
+          error
+        );
+      }
+    };
+
+    loadProfile();
   }, []);
 
   // ==================== 방명록 불러오기 ====================
@@ -206,6 +264,79 @@ export default function Home() {
       );
     }
   };
+
+  // ==================== 자기소개 저장 ====================
+
+const handleIntroSave = async () => {
+  const text = newIntroText.trim();
+
+  if (!text) {
+    alert("자기소개 내용을 입력해주세요.");
+    return;
+  }
+
+  try {
+    await setDoc(
+      doc(db, "homepage", "profile"),
+      {
+        introText: text,
+      },
+      { merge: true }
+    );
+
+    setIntroText(text);
+    setEditingIntro(false);
+
+    alert("자기소개가 변경되었습니다!");
+  } catch (error) {
+    console.error(
+      "자기소개 변경 실패:",
+      error
+    );
+
+    alert("자기소개 변경에 실패했습니다.");
+  }
+};
+
+
+// ==================== SNS 저장 ====================
+
+const handleSNSSave = async () => {
+  try {
+    await setDoc(
+      doc(db, "homepage", "profile"),
+      {
+        twitterUrl: newTwitterUrl.trim() || "#",
+        youtubeUrl: newYoutubeUrl.trim() || "#",
+        crepeUrl: newCrepeUrl.trim() || "#",
+      },
+      { merge: true }
+    );
+
+    setTwitterUrl(
+      newTwitterUrl.trim() || "#"
+    );
+
+    setYoutubeUrl(
+      newYoutubeUrl.trim() || "#"
+    );
+
+    setCrepeUrl(
+      newCrepeUrl.trim() || "#"
+    );
+
+    setEditingSNS(false);
+
+    alert("SNS 링크가 변경되었습니다!");
+  } catch (error) {
+    console.error(
+      "SNS 링크 변경 실패:",
+      error
+    );
+
+    alert("SNS 링크 변경에 실패했습니다.");
+  }
+};
 
   // ==================== 방명록 등록 ====================
 
