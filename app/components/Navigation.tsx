@@ -4,29 +4,35 @@ import { useState } from "react";
 
 const menus = [
   {
-    name: "소개",
+    name: "홈",
+    href: "/",
+    items: [],
+  },
+  {
+    name: "성향표",
     href: "/about",
     items: [],
   },
   {
-    name: "홈",
-    href: "/",
+    name: "게시판",
+    href: "#",
     items: ["방명록", "커미션"],
   },
   {
     name: "커뮤",
-    href: "/community",
-    items: [],
+    href: "#",
+    items: ["메뉴 이름 1", "메뉴 이름 2", "메뉴 이름 3"],
   },
   {
     name: "기록",
     href: "#",
-    items: ["다이어리", "메뉴 이름 2", "메뉴 이름 3"],
+    items: ["메뉴 이름 1", "메뉴 이름 2", "메뉴 이름 3"],
   },
 ];
 
 export default function Navigation() {
-  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [openMenu, setOpenMenu] =
+    useState<string | null>(null);
 
   return (
     <nav
@@ -45,15 +51,23 @@ export default function Navigation() {
           style={{
             position: "relative",
           }}
-          onMouseEnter={() => setOpenMenu(menu.name)}
-          onMouseLeave={() => setOpenMenu(null)}
+          onMouseEnter={() =>
+            setOpenMenu(menu.name)
+          }
+          onMouseLeave={() =>
+            setOpenMenu(null)
+          }
         >
           <a
             href={menu.href}
-            onClick={() => {
+            onClick={(e) => {
               if (menu.items.length > 0) {
+                e.preventDefault();
+
                 setOpenMenu(
-                  openMenu === menu.name ? null : menu.name
+                  openMenu === menu.name
+                    ? null
+                    : menu.name
                 );
               }
             }}
@@ -80,44 +94,57 @@ export default function Navigation() {
                   left: "-15px",
                   width: "150px",
                   background: "#FFFFFF",
-                  border: "1px solid #B9DFF5",
+                  border:
+                    "1px solid #B9DFF5",
                   borderRadius: "15px",
                   padding: "10px",
                   boxShadow:
                     "0 10px 30px rgba(40, 120, 181, 0.12)",
                   zIndex: 100,
-                  animation: "dropdownUp 0.25s ease-out",
+                  animation:
+                    "dropdownUp 0.25s ease-out",
                 }}
               >
-                {menu.items.map((item, index) => (
-                  <a
-                    key={item}
-                    href={`/menu/${menu.name}-${index + 1}`}
-                    style={{
-                      display: "block",
-                      padding: "10px 12px",
-                      borderRadius: "10px",
-                      color: "#2878B5",
-                      textDecoration: "none",
-                      transition:
-                        "background 0.2s ease, color 0.2s ease",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background =
-                        "#EAF6FF";
-                      e.currentTarget.style.color =
-                        "#F2C94C";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background =
-                        "transparent";
-                      e.currentTarget.style.color =
-                        "#2878B5";
-                    }}
-                  >
-                    {item}
-                  </a>
-                ))}
+                {menu.items.map(
+                  (item, index) => (
+                    <a
+                      key={item}
+                      href={
+                        menu.name ===
+                        "게시판"
+                          ? index === 0
+                            ? "/guestbook"
+                            : "/commission"
+                          : `/menu/${menu.name}-${index + 1}`
+                      }
+                      style={{
+                        display: "block",
+                        padding:
+                          "10px 12px",
+                        borderRadius: "10px",
+                        color: "#2878B5",
+                        textDecoration:
+                          "none",
+                        transition:
+                          "background 0.2s ease, color 0.2s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background =
+                          "#EAF6FF";
+                        e.currentTarget.style.color =
+                          "#F2C94C";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background =
+                          "transparent";
+                        e.currentTarget.style.color =
+                          "#2878B5";
+                      }}
+                    >
+                      {item}
+                    </a>
+                  )
+                )}
               </div>
             )}
         </div>
