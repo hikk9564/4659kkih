@@ -501,6 +501,17 @@ export default function AboutPage() {
             boxSizing: "border-box",
           }}
         >
+          <h2
+  style={{
+    margin: "0 0 25px",
+    fontSize: "22px",
+    fontWeight: "700",
+    lineHeight: 1.4,
+    color: "#234A68",
+  }}
+>
+  2차
+</h2>
           {!editingTexts ? (
             <>
               {textItems.map((item, index) => (
