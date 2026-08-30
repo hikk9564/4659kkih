@@ -324,17 +324,17 @@ export default function PersonalityPage() {
         {/* =========================
             제목
         ========================= */}
+<h1
+  style={{
+    fontSize: "42px",
+    fontWeight: "400",
+    margin: 0,
+  }}
+>
+  PERSONALITY
+</h1>
 
-        <h1
-          <Navigation />
-          style={{
-            fontSize: "42px",
-            fontWeight: "400",
-            margin: 0,
-          }}
-        >
-          PERSONALITY
-        </h1>
+<Navigation />
 
         <Navigation />
 
