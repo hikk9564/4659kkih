@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navigation from "../components/Navigation";
+import { collection, addDoc, getDocs } from "firebase/firestore";
+import { db } from "../../lib/firebase";
 
 export default function CalendarPage() {
 const [selectedDate, setSelectedDate] =
@@ -21,6 +23,41 @@ const [scheduleStart, setScheduleStart] =
 
 const [scheduleEnd, setScheduleEnd] =
   useState("");
+
+  const [schedules, setSchedules] = useState<
+  {
+    id: string;
+    title: string;
+    start: string;
+    end: string;
+  }[]
+>([]);
+
+  useEffect(() => {
+  const loadSchedules = async () => {
+    try {
+      const snapshot = await getDocs(
+        collection(db, "schedules")
+      );
+
+      const list = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as {
+        id: string;
+        title: string;
+        start: string;
+        end: string;
+      }[];
+
+      setSchedules(list);
+    } catch (error) {
+      console.error("일정 불러오기 실패:", error);
+    }
+  };
+
+  loadSchedules();
+}, []);
   
   const year = currentDate.getFullYear();
 const month = currentDate.getMonth();
@@ -238,7 +275,30 @@ const lastDate = new Date(year, month + 1, 0).getDate();
             color: "#5BB9E8",
           }}
         >
-          {/* 나중에 일기/일정 표시 */}
+ <div
+  style={{
+    marginTop: "8px",
+    fontSize: "10px",
+    color: "#5BB9E8",
+    overflow: "hidden",
+  }}
+>
+  {schedules
+    .filter((schedule) => {
+      const dateString =
+        `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+      return (
+        dateString >= schedule.start &&
+        dateString <= schedule.end
+      );
+    })
+    .map((schedule) => (
+      <div key={schedule.id}>
+        ● {schedule.title}
+      </div>
+    ))}
+</div>
         </div>
       </button>
     );
@@ -474,29 +534,53 @@ const lastDate = new Date(year, month + 1, 0).getDate();
         </button>
 
         <button
-          onClick={() => {
-            if (!scheduleTitle.trim()) {
-              alert("일정 이름을 입력해주세요.");
-              return;
-            }
+onClick={async () => {
+  if (!scheduleTitle.trim()) {
+    alert("일정 이름을 입력해주세요.");
+    return;
+  }
 
-            if (!scheduleStart || !scheduleEnd) {
-              alert("시작일과 종료일을 선택해주세요.");
-              return;
-            }
+  if (!scheduleStart || !scheduleEnd) {
+    alert("시작일과 종료일을 선택해주세요.");
+    return;
+  }
 
-            if (scheduleStart > scheduleEnd) {
-              alert("종료일은 시작일보다 빠를 수 없습니다.");
-              return;
-            }
+  if (scheduleStart > scheduleEnd) {
+    alert("종료일은 시작일보다 빠를 수 없습니다.");
+    return;
+  }
 
-            alert("일정이 입력되었습니다!");
+  try {
+    const newSchedule = {
+      title: scheduleTitle.trim(),
+      start: scheduleStart,
+      end: scheduleEnd,
+    };
 
-            setIsScheduleOpen(false);
-            setScheduleTitle("");
-            setScheduleStart("");
-            setScheduleEnd("");
-          }}
+    const docRef = await addDoc(
+      collection(db, "schedules"),
+      newSchedule
+    );
+
+    setSchedules((prev) => [
+      ...prev,
+      {
+        id: docRef.id,
+        ...newSchedule,
+      },
+    ]);
+
+    alert("일정이 추가되었습니다!");
+
+    setIsScheduleOpen(false);
+    setScheduleTitle("");
+    setScheduleStart("");
+    setScheduleEnd("");
+  } catch (error) {
+    console.error("일정 추가 실패:", error);
+    alert("일정 추가에 실패했습니다.");
+  }
+}}
           style={{
             border: "none",
             background: "#2878B5",
