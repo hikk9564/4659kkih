@@ -1,8 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import Navigation from "../components/Navigation";
 
 export default function CalendarPage() {
+  const [selectedDate, setSelectedDate] =
+    useState<number | null>(null);
+
+  
   return (
     <main
       style={{
@@ -193,24 +198,23 @@ export default function CalendarPage() {
               29,
               30,
               31,
-            ].map((date, index) => (
-              <button
-                key={index}
-                style={{
-                  minHeight: "80px",
-                  border: "none",
-                  borderBottom:
-                    "1px solid #EAF6FF",
-                  background: "#FFFFFF",
-                  color:
-                    index < 6
-                      ? "#B5C9D6"
-                      : "#234A68",
-                  fontSize: "14px",
-                  textAlign: "left",
-                  padding: "12px",
-                  cursor: "pointer",
-                }}
+            ].map((day, index) => (
+  <button
+    key={index}
+    onClick={() => setSelectedDate(index)}
+    style={{
+      minHeight: "80px",
+      border: "none",
+      background:
+        selectedDate === index
+          ? "#FFF8D9"
+          : "#FFFFFF",
+    }}
+  >
+    {day}
+  </button>
+))}}
+
               >
                 {date}
 
