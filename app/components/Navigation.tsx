@@ -1,31 +1,27 @@
+```tsx
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
-const menus = [
-  {
-    name: "홈",
-    href: "/",
-    items: [],
-  },
-  {
-    name: "성향표",
-    href: "/about",
-    items: [],
-  },
-  {
-    name: "게시판",
-    href: "#",
-    items: ["방명록", "커미션"],
-  },
-  {
-    name: "커뮤",
-    href: "#",
-    items: ["자캐", "앤관", "논씨피관 및 자캐팟"],
-  },
-  {
+type MenuItem = {
+  name: string;
+  href: string;
+};
 
- href: "#",
+type Menu = {
+  name: string;
+  href?: string;
+  items?: MenuItem[];
+};
+
+const menus: Menu[] = [
+  {
+    name: "HOME",
+    href: "/",
+  },
+  {
+    name: "기록",
     items: [
       {
         name: "일기",
@@ -37,6 +33,10 @@ const menus = [
       },
     ],
   },
+  {
+    name: "게시판",
+    href: "/board",
+  },
 ];
 
 export default function Navigation() {
@@ -46,132 +46,137 @@ export default function Navigation() {
   return (
     <nav
       style={{
-        marginTop: "25px",
+        marginTop: "20px",
         display: "flex",
-        gap: "28px",
-        fontSize: "14px",
-        position: "relative",
+        alignItems: "center",
+        gap: "25px",
         flexWrap: "wrap",
       }}
     >
-      {menus.map((menu) => (
-        <div
-          key={menu.name}
-          style={{
-            position: "relative",
-          }}
-          onMouseEnter={() =>
-            setOpenMenu(menu.name)
-          }
-          onMouseLeave={() =>
-            setOpenMenu(null)
-          }
-        >
-          <a
-            href={menu.href}
-            onClick={(e) => {
-              if (menu.items.length > 0) {
-                e.preventDefault();
+      {menus.map((menu) => {
+        const hasSubMenu =
+          !!menu.items &&
+          menu.items.length > 0;
 
-                setOpenMenu(
-                  openMenu === menu.name
-                    ? null
-                    : menu.name
-                );
+        return (
+          <div
+            key={menu.name}
+            style={{
+              position: "relative",
+            }}
+            onMouseEnter={() => {
+              if (hasSubMenu) {
+                setOpenMenu(menu.name);
               }
             }}
-            style={{
-              color:
-                openMenu === menu.name
-                  ? "#F2C94C"
-                  : "#2878B5",
-              textDecoration: "none",
-              cursor: "pointer",
-              display: "inline-block",
-              padding: "5px 0",
+            onMouseLeave={() => {
+              if (hasSubMenu) {
+                setOpenMenu(null);
+              }
             }}
           >
-            {menu.name}
-          </a>
-
-          {openMenu === menu.name &&
-            menu.items.length > 0 && (
-              <div
+            {menu.href ? (
+              <Link
+                href={menu.href}
                 style={{
-                  position: "absolute",
-                  top: "34px",
-                  left: "-15px",
-                  width: "150px",
-                  background: "#FFFFFF",
-                  border:
-                    "1px solid #B9DFF5",
-                  borderRadius: "15px",
-                  padding: "10px",
-                  boxShadow:
-                    "0 10px 30px rgba(40, 120, 181, 0.12)",
-                  zIndex: 100,
-                  animation:
-                    "dropdownUp 0.25s ease-out",
+                  color: "#234A68",
+                  textDecoration: "none",
+                  fontSize: "14px",
+                  fontWeight: "500",
                 }}
               >
-                {menu.items.map(
-                  (item, index) => (
-                    <a
-                      key={item}
-                      href={
-                        menu.name ===
-                        "게시판"
-                          ? index === 0
-                            ? "/guestbook"
-                            : "/commission"
-                          : `/menu/${menu.name}-${index + 1}`
-                      }
-                      style={{
-                        display: "block",
-                        padding:
-                          "10px 12px",
-                        borderRadius: "10px",
-                        color: "#2878B5",
-                        textDecoration:
-                          "none",
-                        transition:
-                          "background 0.2s ease, color 0.2s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background =
-                          "#EAF6FF";
-                        e.currentTarget.style.color =
-                          "#F2C94C";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background =
-                          "transparent";
-                        e.currentTarget.style.color =
-                          "#2878B5";
-                      }}
-                    >
-                      {item}
-                    </a>
-                  )
-                )}
-              </div>
+                {menu.name}
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setOpenMenu(
+                    openMenu === menu.name
+                      ? null
+                      : menu.name
+                  );
+                }}
+                style={{
+                  border: "none",
+                  background: "transparent",
+                  color: "#234A68",
+                  padding: 0,
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                }}
+              >
+                {menu.name}
+              </button>
             )}
-        </div>
-      ))}
 
-      <style jsx>{`
-        @keyframes dropdownUp {
-          from {
-            opacity: 0;
-            transform: translateY(8px);
-          }
-
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
+            {hasSubMenu &&
+              openMenu === menu.name && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    left: "50%",
+                    transform:
+                      "translateX(-50%)",
+                    marginTop: "10px",
+                    minWidth: "120px",
+                    background: "#FFFFFF",
+                    border:
+                      "1px solid #B9DFF5",
+                    borderRadius: "10px",
+                    padding: "6px",
+                    boxShadow:
+                      "0 8px 20px rgba(40, 120, 181, 0.12)",
+                    zIndex: 100,
+                  }}
+                >
+                  {menu.items?.map(
+                    (item) => (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        style={{
+                          display: "block",
+                          padding:
+                            "9px 12px",
+                          color:
+                            "#234A68",
+                          textDecoration:
+                            "none",
+                          fontSize:
+                            "13px",
+                          borderRadius:
+                            "7px",
+                        }}
+                        onMouseEnter={(
+                          e
+                        ) => {
+                          e.currentTarget.style.background =
+                            "#EAF6FF";
+                          e.currentTarget.style.color =
+                            "#2878B5";
+                        }}
+                        onMouseLeave={(
+                          e
+                        ) => {
+                          e.currentTarget.style.background =
+                            "transparent";
+                          e.currentTarget.style.color =
+                            "#234A68";
+                        }}
+                      >
+                        {item.name}
+                      </Link>
+                    )
+                  )}
+                </div>
+              )}
+          </div>
+        );
+      })}
     </nav>
   );
 }
+```
