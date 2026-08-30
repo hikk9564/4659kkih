@@ -17,6 +17,8 @@ import {
 
 import { auth, db, storage } from "../../lib/firebase";
 
+import Navigation from "../components/Navigation";
+
 const ADMIN_EMAIL = "hyoeunzz09@gmail.com";
 
 type PersonalityItem = {
@@ -324,6 +326,7 @@ export default function PersonalityPage() {
         ========================= */}
 
         <h1
+          <Navigation />
           style={{
             fontSize: "42px",
             fontWeight: "400",
