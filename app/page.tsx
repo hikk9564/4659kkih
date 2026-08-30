@@ -391,9 +391,17 @@ useEffect(() => {
       </button>
     )}
 
+  {user?.email === ADMIN_EMAIL && (
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "flex-end",
+      gap: "10px",
+    }}
+  >
     <label
       style={{
-        marginLeft: "10px",
         color: "#2878B5",
         fontSize: "12px",
         cursor: "pointer",
@@ -408,6 +416,25 @@ useEffect(() => {
         style={{ display: "none" }}
       />
     </label>
+
+    <button
+      onClick={() => {
+        setNewImageText(imageText);
+        setEditingImageText(true);
+      }}
+      style={{
+        border: "none",
+        background: "none",
+        color: "#2878B5",
+        fontSize: "12px",
+        cursor: "pointer",
+        padding: 0,
+      }}
+    >
+      문구 변경
+    </button>
+  </div>
+)}
   </>
 )}
           </div>
