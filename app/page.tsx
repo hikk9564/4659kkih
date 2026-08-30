@@ -497,7 +497,7 @@ export default function Home() {
     </label>
   </span>
 )}
-            )}
+
           </div>
         </div>
       </section>
