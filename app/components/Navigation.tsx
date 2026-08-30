@@ -25,9 +25,9 @@ const menus = [
   },
   {
 
-  name: "캘린더",
+  name: "기록",
   href: "/calendar",
-  items: [],
+  items: ["캘린더", "일기"],
 },
 ];
 
