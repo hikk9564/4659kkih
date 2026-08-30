@@ -640,353 +640,342 @@ const handleSNSSave = async () => {
           width: "100%",
           maxWidth: "1100px",
           margin: "35px auto 0",
-          display: "grid",
-          gridTemplateColumns:
-            "1fr",
-          gap: "25px",
           boxSizing: "border-box",
         }}
       >
-        {/* ==================== 소개 / SNS ==================== */}
 
-<section
-  style={{
-    width: "100%",
-    maxWidth: "1100px",
-    margin: "25px auto 0",
-    display: "grid",
-    gridTemplateColumns: "1fr",
-    gap: "25px",
-  }}
->
-{/* ==================== 자기소개 / SNS ==================== */}
+        {/* ==================== 자기소개 / SNS ==================== */}
 
-<section
-  style={{
-    width: "100%",
-    display: "grid",
-    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-    gap: "25px",
-    marginBottom: "25px",
-  }}
->
-  {/* ==================== 자기소개 ==================== */}
-
-  <section
-    style={{
-      background: "#FFFFFF",
-      padding: "25px",
-      borderRadius: "20px",
-      border: "1px solid #B9DFF5",
-      boxShadow:
-        "0 10px 30px rgba(40, 120, 181, 0.08)",
-      boxSizing: "border-box",
-    }}
-  >
-    <h2
-      style={{
-        margin: 0,
-        fontSize: "20px",
-        fontWeight: "400",
-      }}
-    >
-      자기소개
-    </h2>
-
-    {user?.email === ADMIN_EMAIL && editingIntro ? (
-      <>
-        <textarea
-          value={newIntroText}
-          onChange={(e) =>
-            setNewIntroText(e.target.value)
-          }
+        <section
           style={{
             width: "100%",
-            height: "120px",
-            marginTop: "15px",
-            padding: "10px",
-            boxSizing: "border-box",
-            resize: "vertical",
-            border: "1px solid #B9DFF5",
-            borderRadius: "10px",
-            fontFamily: "inherit",
-            fontSize: "14px",
-            lineHeight: "1.8",
-            outline: "none",
-          }}
-        />
-
-        <div
-          style={{
-            marginTop: "10px",
-            textAlign: "right",
+            display: "grid",
+            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+            gap: "25px",
+            marginBottom: "25px",
           }}
         >
-          <button
-            onClick={handleIntroSave}
+
+          {/* ==================== 자기소개 ==================== */}
+
+          <section
             style={{
-              border: "none",
-              background: "#2878B5",
-              color: "#FFFFFF",
-              borderRadius: "8px",
-              padding: "6px 12px",
-              fontSize: "12px",
-              cursor: "pointer",
-            }}
-          >
-            저장
-          </button>
-
-          <button
-            onClick={() =>
-              setEditingIntro(false)
-            }
-            style={{
-              marginLeft: "6px",
-              border: "none",
-              background: "transparent",
-              color: "#8AAFC5",
-              fontSize: "12px",
-              cursor: "pointer",
-            }}
-          >
-            취소
-          </button>
-        </div>
-      </>
-    ) : (
-      <>
-        <p
-          style={{
-            marginTop: "15px",
-            marginBottom: 0,
-            fontSize: "14px",
-            lineHeight: "1.8",
-            whiteSpace: "pre-wrap",
-          }}
-        >
-          {introText}
-        </p>
-
-        {user?.email === ADMIN_EMAIL && (
-          <button
-            onClick={() => {
-              setNewIntroText(introText);
-              setEditingIntro(true);
-            }}
-            style={{
-              marginTop: "12px",
-              border: "none",
-              background: "transparent",
-              color: "#2878B5",
-              fontSize: "12px",
-              cursor: "pointer",
-              padding: 0,
-            }}
-          >
-            자기소개 수정
-          </button>
-        )}
-      </>
-    )}
-  </section>
-
-
-  {/* ==================== SNS ==================== */}
-
-  <section
-    style={{
-      background: "#FFFFFF",
-      padding: "25px",
-      borderRadius: "20px",
-      border: "1px solid #B9DFF5",
-      boxShadow:
-        "0 10px 30px rgba(40, 120, 181, 0.08)",
-      boxSizing: "border-box",
-    }}
-  >
-    <h2
-      style={{
-        margin: 0,
-        fontSize: "20px",
-        fontWeight: "400",
-      }}
-    >
-      SNS
-    </h2>
-
-    {user?.email === ADMIN_EMAIL && editingSNS ? (
-      <>
-        <div
-          style={{
-            marginTop: "15px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "8px",
-          }}
-        >
-          <input
-            type="text"
-            placeholder="Twitter 링크"
-            value={newTwitterUrl}
-            onChange={(e) =>
-              setNewTwitterUrl(e.target.value)
-            }
-            style={{
+              background: "#FFFFFF",
+              padding: "25px",
+              borderRadius: "20px",
               border: "1px solid #B9DFF5",
-              borderRadius: "8px",
-              padding: "8px 10px",
-              outline: "none",
-              fontSize: "13px",
+              boxShadow:
+                "0 10px 30px rgba(40, 120, 181, 0.08)",
+              boxSizing: "border-box",
             }}
-          />
+          >
+            <h2
+              style={{
+                margin: 0,
+                fontSize: "20px",
+                fontWeight: "400",
+              }}
+            >
+              자기소개
+            </h2>
 
-          <input
-            type="text"
-            placeholder="YouTube 링크"
-            value={newYoutubeUrl}
-            onChange={(e) =>
-              setNewYoutubeUrl(e.target.value)
-            }
+            {user?.email === ADMIN_EMAIL && editingIntro ? (
+              <>
+                <textarea
+                  value={newIntroText}
+                  onChange={(e) =>
+                    setNewIntroText(e.target.value)
+                  }
+                  style={{
+                    width: "100%",
+                    height: "120px",
+                    marginTop: "15px",
+                    padding: "10px",
+                    boxSizing: "border-box",
+                    resize: "vertical",
+                    border: "1px solid #B9DFF5",
+                    borderRadius: "10px",
+                    fontFamily: "inherit",
+                    fontSize: "14px",
+                    lineHeight: "1.8",
+                    outline: "none",
+                  }}
+                />
+
+                <div
+                  style={{
+                    marginTop: "10px",
+                    textAlign: "right",
+                  }}
+                >
+                  <button
+                    onClick={handleIntroSave}
+                    style={{
+                      border: "none",
+                      background: "#2878B5",
+                      color: "#FFFFFF",
+                      borderRadius: "8px",
+                      padding: "6px 12px",
+                      fontSize: "12px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    저장
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      setEditingIntro(false)
+                    }
+                    style={{
+                      marginLeft: "6px",
+                      border: "none",
+                      background: "transparent",
+                      color: "#8AAFC5",
+                      fontSize: "12px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    취소
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p
+                  style={{
+                    marginTop: "15px",
+                    marginBottom: 0,
+                    fontSize: "14px",
+                    lineHeight: "1.8",
+                    whiteSpace: "pre-wrap",
+                  }}
+                >
+                  {introText}
+                </p>
+
+                {user?.email === ADMIN_EMAIL && (
+                  <button
+                    onClick={() => {
+                      setNewIntroText(introText);
+                      setEditingIntro(true);
+                    }}
+                    style={{
+                      marginTop: "12px",
+                      border: "none",
+                      background: "transparent",
+                      color: "#2878B5",
+                      fontSize: "12px",
+                      cursor: "pointer",
+                      padding: 0,
+                    }}
+                  >
+                    자기소개 수정
+                  </button>
+                )}
+              </>
+            )}
+          </section>
+
+
+          {/* ==================== SNS ==================== */}
+
+          <section
             style={{
+              background: "#FFFFFF",
+              padding: "25px",
+              borderRadius: "20px",
               border: "1px solid #B9DFF5",
-              borderRadius: "8px",
-              padding: "8px 10px",
-              outline: "none",
-              fontSize: "13px",
-            }}
-          />
-
-          <input
-            type="text"
-            placeholder="크레페 링크"
-            value={newCrepeUrl}
-            onChange={(e) =>
-              setNewCrepeUrl(e.target.value)
-            }
-            style={{
-              border: "1px solid #B9DFF5",
-              borderRadius: "8px",
-              padding: "8px 10px",
-              outline: "none",
-              fontSize: "13px",
-            }}
-          />
-        </div>
-
-        <div
-          style={{
-            marginTop: "10px",
-            textAlign: "right",
-          }}
-        >
-          <button
-            onClick={handleSNSSave}
-            style={{
-              border: "none",
-              background: "#2878B5",
-              color: "#FFFFFF",
-              borderRadius: "8px",
-              padding: "6px 12px",
-              fontSize: "12px",
-              cursor: "pointer",
+              boxShadow:
+                "0 10px 30px rgba(40, 120, 181, 0.08)",
+              boxSizing: "border-box",
             }}
           >
-            저장
-          </button>
+            <h2
+              style={{
+                margin: 0,
+                fontSize: "20px",
+                fontWeight: "400",
+              }}
+            >
+              SNS
+            </h2>
 
-          <button
-            onClick={() =>
-              setEditingSNS(false)
-            }
-            style={{
-              marginLeft: "6px",
-              border: "none",
-              background: "transparent",
-              color: "#8AAFC5",
-              fontSize: "12px",
-              cursor: "pointer",
-            }}
-          >
-            취소
-          </button>
-        </div>
-      </>
-    ) : (
-      <>
-        <div
-          style={{
-            marginTop: "15px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "12px",
-          }}
-        >
-          <a
-            href={twitterUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              color: "#2878B5",
-              textDecoration: "none",
-              fontSize: "14px",
-            }}
-          >
-            𝕏 Twitter
-          </a>
+            {user?.email === ADMIN_EMAIL && editingSNS ? (
+              <>
+                <div
+                  style={{
+                    marginTop: "15px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                  }}
+                >
+                  <input
+                    type="text"
+                    placeholder="Twitter 링크"
+                    value={newTwitterUrl}
+                    onChange={(e) =>
+                      setNewTwitterUrl(e.target.value)
+                    }
+                    style={{
+                      border: "1px solid #B9DFF5",
+                      borderRadius: "8px",
+                      padding: "8px 10px",
+                      outline: "none",
+                      fontSize: "13px",
+                    }}
+                  />
 
-          <a
-            href={youtubeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              color: "#2878B5",
-              textDecoration: "none",
-              fontSize: "14px",
-            }}
-          >
-            ▶ YouTube
-          </a>
+                  <input
+                    type="text"
+                    placeholder="YouTube 링크"
+                    value={newYoutubeUrl}
+                    onChange={(e) =>
+                      setNewYoutubeUrl(e.target.value)
+                    }
+                    style={{
+                      border: "1px solid #B9DFF5",
+                      borderRadius: "8px",
+                      padding: "8px 10px",
+                      outline: "none",
+                      fontSize: "13px",
+                    }}
+                  />
 
-          <a
-            href={crepeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              color: "#2878B5",
-              textDecoration: "none",
-              fontSize: "14px",
-            }}
-          >
-            C 크레페
-          </a>
-        </div>
+                  <input
+                    type="text"
+                    placeholder="크레페 링크"
+                    value={newCrepeUrl}
+                    onChange={(e) =>
+                      setNewCrepeUrl(e.target.value)
+                    }
+                    style={{
+                      border: "1px solid #B9DFF5",
+                      borderRadius: "8px",
+                      padding: "8px 10px",
+                      outline: "none",
+                      fontSize: "13px",
+                    }}
+                  />
+                </div>
 
-        {user?.email === ADMIN_EMAIL && (
-          <button
-            onClick={() => {
-              setNewTwitterUrl(twitterUrl);
-              setNewYoutubeUrl(youtubeUrl);
-              setNewCrepeUrl(crepeUrl);
-              setEditingSNS(true);
-            }}
-            style={{
-              marginTop: "12px",
-              border: "none",
-              background: "transparent",
-              color: "#2878B5",
-              fontSize: "12px",
-              cursor: "pointer",
-              padding: 0,
-            }}
-          >
-            SNS 수정
-          </button>
-        )}
-      </>
-    )}
-  </section>
-</section>
+                <div
+                  style={{
+                    marginTop: "10px",
+                    textAlign: "right",
+                  }}
+                >
+                  <button
+                    onClick={handleSNSSave}
+                    style={{
+                      border: "none",
+                      background: "#2878B5",
+                      color: "#FFFFFF",
+                      borderRadius: "8px",
+                      padding: "6px 12px",
+                      fontSize: "12px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    저장
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      setEditingSNS(false)
+                    }
+                    style={{
+                      marginLeft: "6px",
+                      border: "none",
+                      background: "transparent",
+                      color: "#8AAFC5",
+                      fontSize: "12px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    취소
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div
+                  style={{
+                    marginTop: "15px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "12px",
+                  }}
+                >
+                  <a
+                    href={twitterUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: "#2878B5",
+                      textDecoration: "none",
+                      fontSize: "14px",
+                    }}
+                  >
+                    𝕏 Twitter
+                  </a>
+
+                  <a
+                    href={youtubeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: "#2878B5",
+                      textDecoration: "none",
+                      fontSize: "14px",
+                    }}
+                  >
+                    ▶ YouTube
+                  </a>
+
+                  <a
+                    href={crepeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: "#2878B5",
+                      textDecoration: "none",
+                      fontSize: "14px",
+                    }}
+                  >
+                    C 크레페
+                  </a>
+                </div>
+
+                {user?.email === ADMIN_EMAIL && (
+                  <button
+                    onClick={() => {
+                      setNewTwitterUrl(twitterUrl);
+                      setNewYoutubeUrl(youtubeUrl);
+                      setNewCrepeUrl(crepeUrl);
+                      setEditingSNS(true);
+                    }}
+                    style={{
+                      marginTop: "12px",
+                      border: "none",
+                      background: "transparent",
+                      color: "#2878B5",
+                      fontSize: "12px",
+                      cursor: "pointer",
+                      padding: 0,
+                    }}
+                  >
+                    SNS 수정
+                  </button>
+                )}
+              </>
+            )}
+          </section>
+
+        </section>
+
+
         {/* ==================== 방명록 ==================== */}
 
         <section
@@ -994,11 +983,11 @@ const handleSNSSave = async () => {
             background: "#FFFFFF",
             padding: "35px",
             borderRadius: "20px",
-            border:
-              "1px solid #B9DFF5",
+            border: "1px solid #B9DFF5",
             boxShadow:
               "0 10px 30px rgba(40, 120, 181, 0.08)",
             boxSizing: "border-box",
+            marginBottom: "25px",
           }}
         >
           <h2
@@ -1022,8 +1011,7 @@ const handleSNSSave = async () => {
               marginBottom: "25px",
             }}
           >
-            {guestbookList.length ===
-            0 ? (
+            {guestbookList.length === 0 ? (
               <p
                 style={{
                   fontSize: "13px",
@@ -1034,41 +1022,30 @@ const handleSNSSave = async () => {
                 아직 방명록이 없습니다.
               </p>
             ) : (
-              guestbookList.map(
-                (item) => (
-                  <div
-                    key={item.id}
+              guestbookList.map((item) => (
+                <div
+                  key={item.id}
+                  style={{
+                    padding: "12px 0",
+                    borderBottom:
+                      "1px solid #EAF6FF",
+                    fontSize: "14px",
+                  }}
+                >
+                  <strong
                     style={{
-                      padding:
-                        "12px 0",
-                      borderBottom:
-                        "1px solid #EAF6FF",
-                      fontSize:
-                        "14px",
+                      fontWeight: "500",
+                      marginRight: "8px",
                     }}
                   >
-                    <strong
-                      style={{
-                        fontWeight:
-                          "500",
-                        marginRight:
-                          "8px",
-                      }}
-                    >
-                      {item.name}
-                    </strong>
+                    {item.name}
+                  </strong>
 
-                    <span
-                      style={{
-                        opacity:
-                          0.8,
-                      }}
-                    >
-                      {item.message}
-                    </span>
-                  </div>
-                )
-              )
+                  <span style={{ opacity: 0.8 }}>
+                    {item.message}
+                  </span>
+                </div>
+              ))
             )}
           </div>
 
@@ -1076,36 +1053,28 @@ const handleSNSSave = async () => {
 
           <div
             style={{
-              borderTop:
-                "1px solid #B9DFF5",
+              borderTop: "1px solid #B9DFF5",
               paddingTop: "25px",
             }}
           >
             <div
               style={{
                 display: "flex",
-                alignItems:
-                  "center",
+                alignItems: "center",
                 gap: "10px",
-                marginBottom:
-                  "12px",
+                marginBottom: "12px",
                 fontSize: "13px",
               }}
             >
               <label>
                 <input
                   type="checkbox"
-                  checked={
-                    isAnonymous
-                  }
+                  checked={isAnonymous}
                   onChange={(e) =>
-                    setIsAnonymous(
-                      e.target.checked
-                    )
+                    setIsAnonymous(e.target.checked)
                   }
                   style={{
-                    marginRight:
-                      "5px",
+                    marginRight: "5px",
                   }}
                 />
                 익명
@@ -1115,30 +1084,21 @@ const handleSNSSave = async () => {
                 type="text"
                 placeholder="닉네임"
                 value={guestName}
-                disabled={
-                  isAnonymous
-                }
+                disabled={isAnonymous}
                 onChange={(e) =>
-                  setGuestName(
-                    e.target.value
-                  )
+                  setGuestName(e.target.value)
                 }
                 style={{
                   flex: 1,
                   minWidth: 0,
-                  border:
-                    "1px solid #B9DFF5",
-                  borderRadius:
-                    "8px",
-                  padding:
-                    "8px 10px",
+                  border: "1px solid #B9DFF5",
+                  borderRadius: "8px",
+                  padding: "8px 10px",
                   outline: "none",
-                  background:
-                    isAnonymous
-                      ? "#F5F5F5"
-                      : "#FFFFFF",
-                  boxSizing:
-                    "border-box",
+                  background: isAnonymous
+                    ? "#F5F5F5"
+                    : "#FFFFFF",
+                  boxSizing: "border-box",
                 }}
               />
             </div>
@@ -1147,23 +1107,17 @@ const handleSNSSave = async () => {
               placeholder="방명록을 입력하세요"
               value={guestMessage}
               onChange={(e) =>
-                setGuestMessage(
-                  e.target.value
-                )
+                setGuestMessage(e.target.value)
               }
               style={{
                 width: "100%",
                 height: "75px",
-                boxSizing:
-                  "border-box",
+                boxSizing: "border-box",
                 resize: "none",
-                border:
-                  "1px solid #B9DFF5",
-                borderRadius:
-                  "10px",
+                border: "1px solid #B9DFF5",
+                borderRadius: "10px",
                 padding: "10px",
-                fontFamily:
-                  "inherit",
+                fontFamily: "inherit",
                 fontSize: "13px",
                 outline: "none",
               }}
@@ -1179,45 +1133,30 @@ const handleSNSSave = async () => {
               <input
                 type="password"
                 placeholder="비밀번호"
-                value={
-                  guestPassword
-                }
+                value={guestPassword}
                 onChange={(e) =>
-                  setGuestPassword(
-                    e.target.value
-                  )
+                  setGuestPassword(e.target.value)
                 }
                 style={{
                   flex: 1,
                   minWidth: 0,
-                  border:
-                    "1px solid #B9DFF5",
-                  borderRadius:
-                    "8px",
-                  padding:
-                    "8px 10px",
+                  border: "1px solid #B9DFF5",
+                  borderRadius: "8px",
+                  padding: "8px 10px",
                   outline: "none",
-                  boxSizing:
-                    "border-box",
+                  boxSizing: "border-box",
                 }}
               />
 
               <button
-                onClick={
-                  handleGuestbookSubmit
-                }
+                onClick={handleGuestbookSubmit}
                 style={{
                   border: "none",
-                  background:
-                    "#2878B5",
-                  color:
-                    "#FFFFFF",
-                  borderRadius:
-                    "8px",
-                  padding:
-                    "8px 18px",
-                  cursor:
-                    "pointer",
+                  background: "#2878B5",
+                  color: "#FFFFFF",
+                  borderRadius: "8px",
+                  padding: "8px 18px",
+                  cursor: "pointer",
                   flexShrink: 0,
                 }}
               >
@@ -1231,10 +1170,8 @@ const handleSNSSave = async () => {
             style={{
               display: "block",
               marginTop: "25px",
-              color:
-                "#2878B5",
-              textDecoration:
-                "none",
+              color: "#2878B5",
+              textDecoration: "none",
               fontSize: "13px",
               textAlign: "right",
             }}
@@ -1243,6 +1180,7 @@ const handleSNSSave = async () => {
           </a>
         </section>
 
+
         {/* ==================== DIARY ==================== */}
 
         <section
@@ -1250,8 +1188,7 @@ const handleSNSSave = async () => {
             background: "#FFFFFF",
             padding: "35px",
             borderRadius: "20px",
-            border:
-              "1px solid #B9DFF5",
+            border: "1px solid #B9DFF5",
             boxShadow:
               "0 10px 30px rgba(40, 120, 181, 0.08)",
             boxSizing: "border-box",
@@ -1269,48 +1206,35 @@ const handleSNSSave = async () => {
           </h2>
 
           <div>
-            {[1, 2].map(
-              (item) => (
-                <a
-                  key={item}
-                  href={
-                    "/diary/" +
-                    item
-                  }
+            {[1, 2].map((item) => (
+              <a
+                key={item}
+                href={"/diary/" + item}
+                style={{
+                  display: "block",
+                  padding: "15px 5px",
+                  borderBottom:
+                    "1px solid #EAF6FF",
+                  color: "#234A68",
+                  textDecoration: "none",
+                  fontSize: "15px",
+                }}
+              >
+                <span
                   style={{
-                    display:
-                      "block",
-                    padding:
-                      "15px 5px",
-                    borderBottom:
-                      "1px solid #EAF6FF",
-                    color:
-                      "#234A68",
-                    textDecoration:
-                      "none",
-                    fontSize:
-                      "15px",
+                    color: "#5BB9E8",
+                    marginRight: "8px",
+                    fontSize: "11px",
                   }}
                 >
-                  <span
-                    style={{
-                      color:
-                        "#5BB9E8",
-                      marginRight:
-                        "8px",
-                      fontSize:
-                        "11px",
-                    }}
-                  >
-                    ●
-                  </span>
+                  ●
+                </span>
 
-                  {item === 1
-                    ? "오늘의 그림"
-                    : "비 오는 날"}
-                </a>
-              )
-            )}
+                {item === 1
+                  ? "오늘의 그림"
+                  : "비 오는 날"}
+              </a>
+            ))}
           </div>
 
           <a
@@ -1318,10 +1242,8 @@ const handleSNSSave = async () => {
             style={{
               display: "block",
               marginTop: "25px",
-              color:
-                "#2878B5",
-              textDecoration:
-                "none",
+              color: "#2878B5",
+              textDecoration: "none",
               fontSize: "13px",
               textAlign: "right",
             }}
@@ -1329,8 +1251,9 @@ const handleSNSSave = async () => {
             다이어리 전체보기 →
           </a>
         </section>
+
       </section>
-            </section>
     </main>
   );
 }
+
