@@ -600,7 +600,7 @@ export default function Home() {
       </a>
 
       <a href="#" style={{ color: "#2878B5" }}>
-        🥐 크레페
+        C 크레페
       </a>
     </div>
   </section>
