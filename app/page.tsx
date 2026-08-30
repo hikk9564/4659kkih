@@ -62,6 +62,10 @@ const [newCrepeUrl, setNewCrepeUrl] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [guestbookList, setGuestbookList] = useState<any[]>([]);
 
+  // ==================== DIARY 상태 ====================
+
+const [diaryList, setDiaryList] = useState<any[]>([]);
+
   // ==================== 로그인 상태 확인 ====================
 
   useEffect(() => {
@@ -171,6 +175,36 @@ const [newCrepeUrl, setNewCrepeUrl] = useState("");
 
     loadGuestbook();
   }, []);
+
+  // ==================== DIARY 불러오기 ====================
+
+useEffect(() => {
+  const loadDiary = async () => {
+    try {
+      const q = query(
+        collection(db, "diary"),
+        orderBy("createdAt", "desc"),
+        limit(2)
+      );
+
+      const snapshot = await getDocs(q);
+
+      const list = snapshot.docs.map((item) => ({
+        id: item.id,
+        ...item.data(),
+      }));
+
+      setDiaryList(list);
+    } catch (error) {
+      console.error(
+        "DIARY 불러오기 실패:",
+        error
+      );
+    }
+  };
+
+  loadDiary();
+}, []);
 
   // ==================== 이미지 업로드 ====================
 
