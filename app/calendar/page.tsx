@@ -4,8 +4,17 @@ import { useState } from "react";
 import Navigation from "../components/Navigation";
 
 export default function CalendarPage() {
-  const [selectedDate, setSelectedDate] =
-    useState<number | null>(null);
+const [selectedDate, setSelectedDate] =
+  useState<Date | null>(null);
+
+const [currentDate, setCurrentDate] =
+  useState(new Date());
+  
+  const year = currentDate.getFullYear();
+const month = currentDate.getMonth();
+
+const firstDay = new Date(year, month, 1).getDay();
+const lastDate = new Date(year, month + 1, 0).getDate();
 
   
   return (
@@ -100,8 +109,7 @@ export default function CalendarPage() {
                 fontSize: "24px",
                 fontWeight: "400",
               }}
-            >
-              2026년 8월
+            >{year}년 {month + 1}월
             </h2>
 
             <button
@@ -160,45 +168,62 @@ export default function CalendarPage() {
       "repeat(7, minmax(0, 1fr))",
   }}
 >
-  {[
-    26,
-    27,
-    28,
-    29,
-    30,
-    31,
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-    13,
-    14,
-    15,
-    16,
-    17,
-    18,
-    19,
-    20,
-    21,
-    22,
-    23,
-    24,
-    25,
-    26,
-    27,
-    28,
-    29,
-    30,
-    31,
-  ].map((day, index) => (
+  {{Array.from({
+  length: firstDay + lastDate,
+}).map((_, index) => {
+  const day = index - firstDay + 1;
+
+  if (day < 1) {
+    return <div key={index} />;
+  }
+
+  const date = new Date(year, month, day);
+
+  const isToday =
+    date.toDateString() ===
+    new Date().toDateString();
+
+  const isSelected =
+    selectedDate?.toDateString() ===
+    date.toDateString();
+
+  return (
+    <button
+      key={index}
+      onClick={() => setSelectedDate(date)}
+      style={{
+        minHeight: "80px",
+        border: "none",
+        background: isSelected
+          ? "#FFF8D9"
+          : "#FFFFFF",
+        color: "#234A68",
+        fontSize: "14px",
+        fontWeight: isToday
+          ? "700"
+          : "400",
+        cursor: "pointer",
+        padding: "10px",
+        textAlign: "left",
+        transition:
+          "background 0.2s ease",
+      }}
+    >
+      {day}
+
+      <div
+        style={{
+          marginTop: "8px",
+          fontSize: "10px",
+          color: "#5BB9E8",
+        }}
+      >
+        {/* 나중에 일기/일정 표시 */}
+      </div>
+    </button>
+  );
+})}
+   => (
     <button
       key={index}
       onClick={() => setSelectedDate(index)}
