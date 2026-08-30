@@ -6,6 +6,8 @@ import {
   collection,
   addDoc,
   getDocs,
+  deleteDoc,
+  doc,
 } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 
@@ -15,25 +17,6 @@ type Schedule = {
   start: string;
   end: string;
 };
-
-type Diary = {
-  id: string;
-  date: string;
-  title: string;
-  content: string;
-  icon: string;
-};
-
-const diaryIcons = [
-  "☀️",
-  "🌙",
-  "☁️",
-  "🌧️",
-  "🌸",
-  "🍀",
-  "⭐",
-  "💭",
-];
 
 export default function CalendarPage() {
   const [selectedDate, setSelectedDate] =
@@ -54,9 +37,6 @@ export default function CalendarPage() {
   const [diaryContent, setDiaryContent] =
     useState("");
 
-  const [diaryIcon, setDiaryIcon] =
-    useState("☀️");
-
   const [scheduleTitle, setScheduleTitle] =
     useState("");
 
@@ -68,9 +48,6 @@ export default function CalendarPage() {
 
   const [schedules, setSchedules] =
     useState<Schedule[]>([]);
-
-  const [diaries, setDiaries] =
-    useState<Diary[]>([]);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -89,19 +66,6 @@ export default function CalendarPage() {
 
   const totalCells =
     Math.ceil((firstDay + lastDate) / 7) * 7;
-
-  // ==================== 날짜 문자열 ====================
-
-  const makeDateString = (
-    y: number,
-    m: number,
-    d: number
-  ) => {
-    return `${y}-${String(m + 1).padStart(
-      2,
-      "0"
-    )}-${String(d).padStart(2, "0")}`;
-  };
 
   // ==================== 일정 불러오기 ====================
 
@@ -129,31 +93,18 @@ export default function CalendarPage() {
     loadSchedules();
   }, []);
 
-  // ==================== 일기 불러오기 ====================
+  // ==================== 날짜 문자열 ====================
 
-  useEffect(() => {
-    const loadDiaries = async () => {
-      try {
-        const snapshot = await getDocs(
-          collection(db, "diaries")
-        );
-
-        const list = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Diary[];
-
-        setDiaries(list);
-      } catch (error) {
-        console.error(
-          "일기 불러오기 실패:",
-          error
-        );
-      }
-    };
-
-    loadDiaries();
-  }, []);
+  const makeDateString = (
+    y: number,
+    m: number,
+    d: number
+  ) => {
+    return `${y}-${String(m + 1).padStart(
+      2,
+      "0"
+    )}-${String(d).padStart(2, "0")}`;
+  };
 
   // ==================== 일정 추가 ====================
 
@@ -213,204 +164,43 @@ export default function CalendarPage() {
     }
   };
 
-  // ==================== 일기 저장 ====================
+  // ==================== 일정 삭제 ====================
 
-  const handleDiarySave = async () => {
-    if (!selectedDate) {
-      alert("먼저 날짜를 선택해주세요.");
-      return;
-    }
-
-    if (!diaryTitle.trim()) {
-      alert("일기 제목을 입력해주세요.");
-      return;
-    }
-
-    if (!diaryContent.trim()) {
-      alert("일기 내용을 입력해주세요.");
-      return;
-    }
-
-    const diaryDate = makeDateString(
-      selectedDate.getFullYear(),
-      selectedDate.getMonth(),
-      selectedDate.getDate()
+  const handleScheduleDelete = async (
+    scheduleId: string
+  ) => {
+    const confirmed = window.confirm(
+      "이 일정을 삭제할까요?"
     );
 
-    try {
-      const newDiary = {
-        date: diaryDate,
-        title: diaryTitle.trim(),
-        content: diaryContent.trim(),
-        icon: diaryIcon,
-      };
+    if (!confirmed) {
+      return;
+    }
 
-      const docRef = await addDoc(
-        collection(db, "diaries"),
-        newDiary
+    try {
+      await deleteDoc(
+        doc(db, "schedules", scheduleId)
       );
 
-      setDiaries((prev) => [
-        ...prev,
-        {
-          id: docRef.id,
-          ...newDiary,
-        },
-      ]);
+      setSchedules((prev) =>
+        prev.filter(
+          (schedule) =>
+            schedule.id !== scheduleId
+        )
+      );
 
-      alert("일기가 작성되었습니다!");
-
-      setIsDiaryOpen(false);
-      setDiaryTitle("");
-      setDiaryContent("");
-      setDiaryIcon("☀️");
+      alert("일정이 삭제되었습니다.");
     } catch (error) {
       console.error(
-        "일기 저장 실패:",
+        "일정 삭제 실패:",
         error
       );
 
-      alert("일기 저장에 실패했습니다.");
+      alert("일정 삭제에 실패했습니다.");
     }
   };
 
-  // ==================== 주 만들기 ====================
-
-  const weeks = [];
-
-  for (
-    let i = 0;
-    i < totalCells;
-    i += 7
-  ) {
-    const week = [];
-
-    for (let j = 0; j < 7; j++) {
-      const index = i + j;
-      const day =
-        index - firstDay + 1;
-
-      week.push(
-        day >= 1 && day <= lastDate
-          ? day
-          : null
-      );
-    }
-
-    weeks.push(week);
-  }
-
-  // ==================== 일정 막대 계산 ====================
-
-  const getScheduleForWeek = (
-    schedule: Schedule,
-    weekIndex: number
-  ) => {
-    const weekStartDay =
-      weekIndex * 7 - firstDay + 1;
-
-    const weekEndDay =
-      weekStartDay + 6;
-
-    const weekStartDate =
-      new Date(year, month, weekStartDay);
-
-    const weekEndDate =
-      new Date(year, month, weekEndDay);
-
-    const scheduleStartDate =
-      new Date(schedule.start + "T00:00:00");
-
-    const scheduleEndDate =
-      new Date(schedule.end + "T00:00:00");
-
-    if (
-      scheduleEndDate < weekStartDate ||
-      scheduleStartDate > weekEndDate
-    ) {
-      return null;
-    }
-
-    const visibleStart =
-      scheduleStartDate > weekStartDate
-        ? scheduleStartDate
-        : weekStartDate;
-
-    const visibleEnd =
-      scheduleEndDate < weekEndDate
-        ? scheduleEndDate
-        : weekEndDate;
-
-    const startColumn =
-      Math.max(
-        0,
-        Math.round(
-          (visibleStart.getTime() -
-            weekStartDate.getTime()) /
-            (1000 * 60 * 60 * 24)
-        )
-      );
-
-    const endColumn =
-      Math.min(
-        6,
-        Math.round(
-          (visibleEnd.getTime() -
-            weekStartDate.getTime()) /
-            (1000 * 60 * 60 * 24)
-        )
-      );
-
-    return {
-      startColumn,
-      endColumn,
-    };
-  };
-
-  // ==================== 일정 이름 표시 여부 ====================
-
-  const shouldShowScheduleTitle = (
-    schedule: Schedule,
-    weekIndex: number,
-    startColumn: number
-  ) => {
-    const firstVisibleDay =
-      weekIndex * 7 - firstDay + 1;
-
-    const visibleDay =
-      firstVisibleDay + startColumn;
-
-    const visibleDate = new Date(
-      year,
-      month,
-      visibleDay
-    );
-
-    const visibleDateString =
-      makeDateString(
-        visibleDate.getFullYear(),
-        visibleDate.getMonth(),
-        visibleDate.getDate()
-      );
-
-    // 실제 일정 시작일이면 이름 표시
-    if (visibleDateString === schedule.start) {
-      return true;
-    }
-
-    // 이전 달부터 이어진 일정이 현재 달에 들어왔다면
-    // 현재 달의 1일에 이름 표시
-    if (
-      schedule.start <
-        makeDateString(year, month, 1) &&
-      visibleDateString ===
-        makeDateString(year, month, 1)
-    ) {
-      return true;
-    }
-
-    return false;
-  };
+  // ==================== 화면 ====================
 
   return (
     <main
@@ -429,8 +219,7 @@ export default function CalendarPage() {
         style={{
           maxWidth: "1100px",
           margin: "0 auto",
-          borderBottom:
-            "1px solid #B9DFF5",
+          borderBottom: "1px solid #B9DFF5",
           paddingBottom: "20px",
         }}
       >
@@ -469,8 +258,7 @@ export default function CalendarPage() {
         <div
           style={{
             background: "#FFFFFF",
-            border:
-              "1px solid #B9DFF5",
+            border: "1px solid #B9DFF5",
             borderRadius: "20px",
             padding: "35px",
             boxShadow:
@@ -484,8 +272,7 @@ export default function CalendarPage() {
             style={{
               display: "flex",
               alignItems: "center",
-              justifyContent:
-                "space-between",
+              justifyContent: "space-between",
               marginBottom: "30px",
             }}
           >
@@ -501,8 +288,7 @@ export default function CalendarPage() {
               }
               style={{
                 border: "none",
-                background:
-                  "transparent",
+                background: "transparent",
                 color: "#2878B5",
                 fontSize: "22px",
                 cursor: "pointer",
@@ -533,8 +319,7 @@ export default function CalendarPage() {
               }
               style={{
                 border: "none",
-                background:
-                  "transparent",
+                background: "transparent",
                 color: "#2878B5",
                 fontSize: "22px",
                 cursor: "pointer",
@@ -579,239 +364,161 @@ export default function CalendarPage() {
             ))}
           </div>
 
-          {/* ==================== 날짜 + 일정 ==================== */}
+          {/* ==================== 날짜 ==================== */}
 
-          <div>
-            {weeks.map(
-              (week, weekIndex) => {
-                const weekSchedules =
-                  schedules.filter(
-                    (schedule) =>
-                      getScheduleForWeek(
-                        schedule,
-                        weekIndex
-                      ) !== null
-                  );
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns:
+                "repeat(7, minmax(0, 1fr))",
+            }}
+          >
+            {Array.from({
+              length: totalCells,
+            }).map((_, index) => {
+              const day =
+                index - firstDay + 1;
 
+              if (
+                day < 1 ||
+                day > lastDate
+              ) {
                 return (
                   <div
-                    key={weekIndex}
+                    key={index}
                     style={{
-                      position:
-                        "relative",
-                      display: "grid",
-                      gridTemplateColumns:
-                        "repeat(7, minmax(0, 1fr))",
-                      minHeight: "92px",
+                      minHeight: "80px",
+                    }}
+                  />
+                );
+              }
+
+              const date = new Date(
+                year,
+                month,
+                day
+              );
+
+              const dateString =
+                makeDateString(
+                  year,
+                  month,
+                  day
+                );
+
+              const isToday =
+                date.toDateString() ===
+                new Date().toDateString();
+
+              const isSelected =
+                selectedDate?.toDateString() ===
+                date.toDateString();
+
+              const daySchedules =
+                schedules.filter(
+                  (schedule) =>
+                    dateString >=
+                      schedule.start &&
+                    dateString <=
+                      schedule.end
+                );
+
+              return (
+                <button
+                  key={index}
+                  onClick={() =>
+                    setSelectedDate(date)
+                  }
+                  style={{
+                    minHeight: "80px",
+                    border: "none",
+                    background:
+                      isSelected
+                        ? "#FFF8D9"
+                        : "#FFFFFF",
+                    color: "#234A68",
+                    fontSize: "14px",
+                    fontWeight:
+                      isToday
+                        ? "700"
+                        : "400",
+                    cursor: "pointer",
+                    padding: "8px",
+                    textAlign: "left",
+                    position:
+                      "relative",
+                    overflow: "hidden",
+                  }}
+                >
+                  {/* 날짜 */}
+
+                  <div>
+                    {day}
+                  </div>
+
+                  {/* ==================== 일정 표시 ==================== */}
+
+                  <div
+                    style={{
+                      marginTop: "8px",
+                      display: "flex",
+                      flexDirection:
+                        "column",
+                      gap: "3px",
                     }}
                   >
-                    {/* ==================== 날짜 칸 ==================== */}
-
-                    {week.map(
-                      (day, dayIndex) => {
-                        if (!day) {
-                          return (
-                            <div
-                              key={
-                                dayIndex
-                              }
-                              style={{
-                                minHeight:
-                                  "92px",
-                              }}
-                            />
-                          );
-                        }
-
-                        const date =
-                          new Date(
-                            year,
-                            month,
-                            day
-                          );
-
-                        const dateString =
-                          makeDateString(
-                            year,
-                            month,
-                            day
-                          );
-
-                        const isToday =
-                          date.toDateString() ===
-                          new Date().toDateString();
-
-                        const isSelected =
-                          selectedDate?.toDateString() ===
-                          date.toDateString();
-
-                        const diary =
-                          diaries.find(
-                            (item) =>
-                              item.date ===
-                              dateString
-                          );
-
-                        return (
-                          <button
-                            key={
-                              dayIndex
-                            }
-                            onClick={() =>
-                              setSelectedDate(
-                                date
-                              )
-                            }
-                            style={{
-                              minHeight:
-                                "92px",
-                              border:
-                                "none",
-                              background:
-                                isSelected
-                                  ? "#FFF8D9"
-                                  : "#FFFFFF",
-                              color:
-                                "#234A68",
-                              fontSize:
-                                "14px",
-                              fontWeight:
-                                isToday
-                                  ? "700"
-                                  : "400",
-                              cursor:
-                                "pointer",
-                              padding:
-                                "10px",
-                              textAlign:
-                                "left",
-                              position:
-                                "relative",
-                              zIndex: 2,
-                              boxSizing:
-                                "border-box",
-                            }}
-                          >
-                            {/* 날짜 */}
-
-                            <div>
-                              {day}
-                            </div>
-
-                            {/* 일기 아이콘 */}
-
-                            {diary && (
-                              <div
-                                style={{
-                                  position:
-                                    "absolute",
-                                  right:
-                                    "9px",
-                                  bottom:
-                                    "8px",
-                                  fontSize:
-                                    "14px",
-                                  lineHeight:
-                                    1,
-                                }}
-                              >
-                                {
-                                  diary.icon
-                                }
-                              </div>
-                            )}
-                          </button>
-                        );
-                      }
-                    )}
-
-                    {/* ==================== 일정 형광펜 ==================== */}
-
-                    {weekSchedules.map(
-                      (
-                        schedule,
-                        scheduleIndex
-                      ) => {
-                        const range =
-                          getScheduleForWeek(
-                            schedule,
-                            weekIndex
-                          );
-
-                        if (!range) {
-                          return null;
-                        }
-
-                        const columnWidth =
-                          100 / 7;
-
-                        const left =
-                          range.startColumn *
-                          columnWidth;
-
-                        const width =
-                          (range.endColumn -
-                            range.startColumn +
-                            1) *
-                          columnWidth;
-
-                        const showTitle =
-                          shouldShowScheduleTitle(
-                            schedule,
-                            weekIndex,
-                            range.startColumn
-                          );
+                    {daySchedules.map(
+                      (schedule) => {
+                        const isStart =
+                          dateString ===
+                          schedule.start;
 
                         return (
                           <div
                             key={
-                              schedule.id +
-                              "-" +
-                              weekIndex
+                              schedule.id
                             }
                             style={{
-                              position:
-                                "absolute",
-                              left: `${left}%`,
-                              width: `${width}%`,
-                              top:
-                                35 +
-                                scheduleIndex *
-                                  22,
-                              height:
-                                "16px",
+                              height: "8px",
                               background:
-                                "#FFF3A6",
+                                "#FFF08A",
+                              marginLeft:
+                                isStart
+                                  ? "0"
+                                  : "-8px",
+                              marginRight:
+                                dateString ===
+                                schedule.end
+                                  ? "0"
+                                  : "-8px",
                               borderRadius:
-                                "5px",
-                              zIndex: 1,
-                              pointerEvents:
-                                "none",
-                              boxSizing:
-                                "border-box",
-                              overflow:
-                                "hidden",
-                              whiteSpace:
-                                "nowrap",
+                                isStart &&
+                                dateString ===
+                                  schedule.end
+                                  ? "4px"
+                                  : isStart
+                                  ? "4px 0 0 4px"
+                                  : dateString ===
+                                    schedule.end
+                                  ? "0 4px 4px 0"
+                                  : "0",
                             }}
                           >
-                            {showTitle && (
+                            {isStart && (
                               <span
                                 style={{
-                                  display:
-                                    "block",
-                                  padding:
-                                    "1px 7px",
+                                  position:
+                                    "absolute",
+                                  left: "8px",
+                                  top: "38px",
                                   fontSize:
-                                    "10px",
+                                    "9px",
                                   color:
-                                    "#6F6427",
-                                  lineHeight:
-                                    "14px",
-                                  overflow:
-                                    "hidden",
-                                  textOverflow:
-                                    "ellipsis",
+                                    "#8A7A20",
+                                  whiteSpace:
+                                    "nowrap",
+                                  pointerEvents:
+                                    "none",
                                 }}
                               >
                                 {
@@ -824,9 +531,23 @@ export default function CalendarPage() {
                       }
                     )}
                   </div>
-                );
-              }
-            )}
+
+                  {/* ==================== 일기 아이콘 자리 ==================== */}
+
+                  <div
+                    style={{
+                      position:
+                        "absolute",
+                      right: "8px",
+                      bottom: "7px",
+                      fontSize: "13px",
+                    }}
+                  >
+                    {/* 나중에 일기 아이콘 표시 */}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -836,8 +557,7 @@ export default function CalendarPage() {
           style={{
             marginTop: "25px",
             background: "#FFFFFF",
-            border:
-              "1px solid #B9DFF5",
+            border: "1px solid #B9DFF5",
             borderRadius: "20px",
             padding: "30px",
             boxShadow:
@@ -907,144 +627,84 @@ export default function CalendarPage() {
                         schedule.end
                   );
 
-                const selectedDiary =
-                  diaries.find(
-                    (diary) =>
-                      diary.date ===
-                      selectedString
-                  );
-
-                return (
-                  <div>
-                    {/* 일정 */}
-
-                    {selectedSchedules.length >
-                      0 && (
-                      <div>
-                        {selectedSchedules.map(
-                          (schedule) => (
-                            <div
-                              key={
-                                schedule.id
-                              }
-                              style={{
-                                marginBottom:
-                                  "10px",
-                                fontSize:
-                                  "14px",
-                              }}
-                            >
-                              <span
-                                style={{
-                                  display:
-                                    "inline-block",
-                                  width:
-                                    "10px",
-                                  height:
-                                    "10px",
-                                  background:
-                                    "#FFF3A6",
-                                  borderRadius:
-                                    "3px",
-                                  marginRight:
-                                    "8px",
-                                }}
-                              />
-
-                              {
-                                schedule.title
-                              }
-                            </div>
-                          )
-                        )}
-                      </div>
-                    )}
-
-                    {/* 일기 */}
-
-                    {selectedDiary && (
+                return selectedSchedules.length >
+                  0 ? (
+                  selectedSchedules.map(
+                    (schedule) => (
                       <div
+                        key={
+                          schedule.id
+                        }
                         style={{
-                          marginTop:
-                            selectedSchedules.length >
-                            0
-                              ? "20px"
-                              : "0",
-                          paddingTop:
-                            "15px",
-                          borderTop:
-                            selectedSchedules.length >
-                            0
-                              ? "1px solid #EAF6FF"
-                              : "none",
+                          marginBottom:
+                            "10px",
+                          fontSize:
+                            "14px",
+                          display:
+                            "flex",
+                          alignItems:
+                            "center",
+                          justifyContent:
+                            "space-between",
+                          gap: "10px",
                         }}
                       >
-                        <div
-                          style={{
-                            display:
-                              "flex",
-                            alignItems:
-                              "center",
-                            gap: "8px",
-                            fontSize:
-                              "15px",
-                            fontWeight:
-                              "600",
-                          }}
-                        >
-                          <span>
-                            {
-                              selectedDiary.icon
-                            }
+                        <div>
+                          <span
+                            style={{
+                              color:
+                                "#F2C94C",
+                              marginRight:
+                                "8px",
+                            }}
+                          >
+                            ●
                           </span>
 
                           {
-                            selectedDiary.title
+                            schedule.title
                           }
                         </div>
 
-                        <p
-                          style={{
-                            marginTop:
-                              "10px",
-                            marginBottom:
-                              0,
-                            fontSize:
-                              "14px",
-                            lineHeight:
-                              "1.7",
-                            whiteSpace:
-                              "pre-wrap",
-                            color:
-                              "#4B667A",
-                          }}
-                        >
-                          {
-                            selectedDiary.content
+                        <button
+                          onClick={() =>
+                            handleScheduleDelete(
+                              schedule.id
+                            )
                           }
-                        </p>
-                      </div>
-                    )}
-
-                    {/* 아무것도 없을 때 */}
-
-                    {selectedSchedules.length ===
-                      0 &&
-                      !selectedDiary && (
-                        <p
                           style={{
-                            margin: 0,
-                            fontSize:
-                              "14px",
+                            border:
+                              "none",
+                            background:
+                              "transparent",
                             color:
                               "#8AAFC5",
+                            fontSize:
+                              "12px",
+                            cursor:
+                              "pointer",
+                            padding:
+                              "4px 6px",
                           }}
                         >
-                          등록된 기록이
-                          없습니다.
-                        </p>
-                      )}
-                  </div>
+                          삭제
+                        </button>
+                      </div>
+                    )
+                  )
+                ) : (
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize:
+                        "14px",
+                      color:
+                        "#8AAFC5",
+                    }}
+                  >
+                    등록된 일정이
+                    없습니다.
+                  </p>
                 );
               })()
             )}
@@ -1077,7 +737,7 @@ export default function CalendarPage() {
           </div>
         </section>
 
-        {/* ==================== 일기 작성 버튼 ==================== */}
+        {/* ==================== 관리자 일기 작성 ==================== */}
 
         <div
           style={{
@@ -1086,16 +746,9 @@ export default function CalendarPage() {
           }}
         >
           <button
-            onClick={() => {
-              if (!selectedDate) {
-                alert(
-                  "먼저 일기를 작성할 날짜를 선택해주세요."
-                );
-                return;
-              }
-
-              setIsDiaryOpen(true);
-            }}
+            onClick={() =>
+              setIsDiaryOpen(true)
+            }
             style={{
               border:
                 "1px solid #B9DFF5",
@@ -1326,55 +979,6 @@ export default function CalendarPage() {
                 : "날짜를 먼저 선택해주세요."}
             </p>
 
-            {/* ==================== 아이콘 선택 ==================== */}
-
-            <p
-              style={{
-                marginTop: "20px",
-                marginBottom: "8px",
-                fontSize: "13px",
-              }}
-            >
-              오늘의 아이콘
-            </p>
-
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "8px",
-              }}
-            >
-              {diaryIcons.map((icon) => (
-                <button
-                  key={icon}
-                  type="button"
-                  onClick={() =>
-                    setDiaryIcon(icon)
-                  }
-                  style={{
-                    width: "42px",
-                    height: "42px",
-                    border:
-                      diaryIcon === icon
-                        ? "2px solid #2878B5"
-                        : "1px solid #B9DFF5",
-                    background:
-                      diaryIcon === icon
-                        ? "#EAF6FF"
-                        : "#FFFFFF",
-                    borderRadius: "10px",
-                    fontSize: "18px",
-                    cursor: "pointer",
-                  }}
-                >
-                  {icon}
-                </button>
-              ))}
-            </div>
-
-            {/* ==================== 제목 ==================== */}
-
             <input
               type="text"
               placeholder="일기 제목"
@@ -1395,8 +999,6 @@ export default function CalendarPage() {
                 outline: "none",
               }}
             />
-
-            {/* ==================== 내용 ==================== */}
 
             <textarea
               placeholder="오늘의 이야기를 적어보세요."
@@ -1422,8 +1024,6 @@ export default function CalendarPage() {
               }}
             />
 
-            {/* ==================== 버튼 ==================== */}
-
             <div
               style={{
                 display: "flex",
@@ -1438,7 +1038,6 @@ export default function CalendarPage() {
                   setIsDiaryOpen(false);
                   setDiaryTitle("");
                   setDiaryContent("");
-                  setDiaryIcon("☀️");
                 }}
                 style={{
                   border: "none",
@@ -1453,7 +1052,36 @@ export default function CalendarPage() {
               </button>
 
               <button
-                onClick={handleDiarySave}
+                onClick={() => {
+                  if (!selectedDate) {
+                    alert(
+                      "먼저 날짜를 선택해주세요."
+                    );
+                    return;
+                  }
+
+                  if (!diaryTitle.trim()) {
+                    alert(
+                      "일기 제목을 입력해주세요."
+                    );
+                    return;
+                  }
+
+                  if (!diaryContent.trim()) {
+                    alert(
+                      "일기 내용을 입력해주세요."
+                    );
+                    return;
+                  }
+
+                  alert(
+                    "일기가 작성되었습니다!"
+                  );
+
+                  setIsDiaryOpen(false);
+                  setDiaryTitle("");
+                  setDiaryContent("");
+                }}
                 style={{
                   border: "none",
                   background: "#2878B5",
