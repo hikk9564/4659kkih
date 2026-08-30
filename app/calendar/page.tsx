@@ -81,59 +81,60 @@ const lastDate = new Date(year, month + 1, 0).getDate();
             boxSizing: "border-box",
           }}
         >
-          {/* ==================== 월 이동 ==================== */}
+    {/* ==================== 월 이동 ==================== */}
 
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: "30px",
-            }}
-          >
-            <button
-              onClick={() =>
-  setCurrentDate(
-    new Date(year, month - 1, 1)
-  )
-}
-              style={{
-                border: "none",
-                background: "transparent",
-                color: "#2878B5",
-                fontSize: "22px",
-                cursor: "pointer",
-              }}
-            >
-              ←
-            </button>
+<div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: "30px",
+  }}
+>
+  <button
+    onClick={() =>
+      setCurrentDate(
+        new Date(year, month - 1, 1)
+      )
+    }
+    style={{
+      border: "none",
+      background: "transparent",
+      color: "#2878B5",
+      fontSize: "22px",
+      cursor: "pointer",
+    }}
+  >
+    ←
+  </button>
 
-            <h2
-              style={{
-                margin: 0,
-                fontSize: "24px",
-                fontWeight: "400",
-              }}
-            >{year}년 {month + 1}월
-            </h2>
+  <h2
+    style={{
+      margin: 0,
+      fontSize: "24px",
+      fontWeight: "400",
+    }}
+  >
+    {year}년 {month + 1}월
+  </h2>
 
-            <button
-              style={{
-                border: "none",
-                background: "transparent",
-                color: "#2878B5",
-                fontSize: "22px",
-                cursor: "pointer",
-              }}
-            >
-              →
-            </button>
-            onClick={() =>
-  setCurrentDate(
-    new Date(year, month + 1, 1)
-  )
-}
-          </div>
+  <button
+    onClick={() =>
+      setCurrentDate(
+        new Date(year, month + 1, 1)
+      )
+    }
+    style={{
+      border: "none",
+      background: "transparent",
+      color: "#2878B5",
+      fontSize: "22px",
+      cursor: "pointer",
+    }}
+  >
+    →
+  </button>
+</div>
 
           {/* ==================== 요일 ==================== */}
 
