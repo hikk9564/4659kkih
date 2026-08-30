@@ -125,13 +125,13 @@ export default function CalendarPage() {
             }}
           >
             {[
-              "일",
-              "월",
-              "화",
-              "수",
-              "목",
-              "금",
-              "토",
+              "U",
+              "M",
+              "T",
+              "W",
+              "R",
+              "F",
+              "S",
             ].map((day) => (
               <div
                 key={day}
