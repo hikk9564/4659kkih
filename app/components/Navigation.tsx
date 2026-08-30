@@ -1,41 +1,42 @@
-
 "use client";
 
 import Link from "next/link";
 import { useState } from "react";
 
 type MenuItem = {
-  name: string;
-  href: string;
-};
-
-type Menu = {
-  name: string;
+  label: string;
   href?: string;
-  items?: MenuItem[];
+  children?: {
+    label: string;
+    href: string;
+  }[];
 };
 
-const menus: Menu[] = [
+const menuItems: MenuItem[] = [
   {
-    name: "HOME",
+    label: "홈",
     href: "/",
   },
   {
-    name: "기록",
-    items: [
+    label: "기록",
+    children: [
       {
-        name: "일기",
+        label: "일기",
         href: "/diary",
       },
       {
-        name: "캘린더",
-        href: "/calendar",
+        label: "방명록",
+        href: "/guestbook",
       },
     ],
   },
   {
-    name: "게시판",
-    href: "/board",
+    label: "캘린더",
+    href: "/calendar",
+  },
+  {
+    label: "성향표",
+    href: "/personality",
   },
 ];
 
@@ -46,128 +47,159 @@ export default function Navigation() {
   return (
     <nav
       style={{
-        marginTop: "20px",
+        marginTop: "25px",
         display: "flex",
         alignItems: "center",
-        gap: "25px",
-        flexWrap: "wrap",
+        gap: "28px",
+        position: "relative",
+        zIndex: 100,
       }}
     >
-      {menus.map((menu) => {
-        const hasSubMenu =
-          !!menu.items &&
-          menu.items.length > 0;
+      {menuItems.map((item) => {
+        const hasChildren =
+          item.children &&
+          item.children.length > 0;
 
         return (
           <div
-            key={menu.name}
+            key={item.label}
             style={{
               position: "relative",
             }}
-            onMouseEnter={() => {
-              if (hasSubMenu) {
-                setOpenMenu(menu.name);
-              }
-            }}
+            onMouseEnter={() =>
+              hasChildren
+                ? setOpenMenu(item.label)
+                : setOpenMenu(null)
+            }
             onMouseLeave={() => {
-              if (hasSubMenu) {
+              if (hasChildren) {
                 setOpenMenu(null);
               }
             }}
           >
-            {menu.href ? (
+            {item.href ? (
               <Link
-                href={menu.href}
+                href={item.href}
                 style={{
-                  color: "#234A68",
                   textDecoration: "none",
+                  color:
+                    openMenu === item.label
+                      ? "#F2C94C"
+                      : "#234A68",
                   fontSize: "14px",
-                  fontWeight: "500",
+                  transition:
+                    "color 0.2s ease",
+                  display: "block",
+                  padding: "8px 0",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color =
+                    "#F2C94C";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color =
+                    "#234A68";
                 }}
               >
-                {menu.name}
+                {item.label}
               </Link>
             ) : (
               <button
                 type="button"
-                onClick={() => {
+                onClick={() =>
                   setOpenMenu(
-                    openMenu === menu.name
+                    openMenu === item.label
                       ? null
-                      : menu.name
-                  );
-                }}
+                      : item.label
+                  )
+                }
                 style={{
                   border: "none",
                   background: "transparent",
-                  color: "#234A68",
-                  padding: 0,
+                  color:
+                    openMenu === item.label
+                      ? "#F2C94C"
+                      : "#234A68",
                   fontSize: "14px",
-                  fontWeight: "500",
                   cursor: "pointer",
+                  padding: "8px 0",
+                  transition:
+                    "color 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color =
+                    "#F2C94C";
+                }}
+                onMouseLeave={(e) => {
+                  if (
+                    openMenu !== item.label
+                  ) {
+                    e.currentTarget.style.color =
+                      "#234A68";
+                  }
                 }}
               >
-                {menu.name}
+                {item.label}
               </button>
             )}
 
-            {hasSubMenu &&
-              openMenu === menu.name && (
+            {/* ==================== 하위 메뉴 ==================== */}
+
+            {hasChildren &&
+              openMenu === item.label && (
                 <div
                   style={{
                     position: "absolute",
                     top: "100%",
-                    left: "50%",
-                    transform:
-                      "translateX(-50%)",
-                    marginTop: "10px",
-                    minWidth: "120px",
+                    left: "-12px",
+                    width: "130px",
+                    padding: "8px",
                     background: "#FFFFFF",
                     border:
                       "1px solid #B9DFF5",
                     borderRadius: "10px",
-                    padding: "6px",
                     boxShadow:
                       "0 8px 20px rgba(40, 120, 181, 0.12)",
-                    zIndex: 100,
+                    boxSizing: "border-box",
                   }}
+                  onMouseEnter={() =>
+                    setOpenMenu(item.label)
+                  }
+                  onMouseLeave={() =>
+                    setOpenMenu(null)
+                  }
                 >
-                  {menu.items?.map(
-                    (item) => (
+                  {item.children?.map(
+                    (child) => (
                       <Link
-                        key={item.name}
-                        href={item.href}
+                        key={child.label}
+                        href={child.href}
                         style={{
                           display: "block",
-                          padding:
-                            "9px 12px",
-                          color:
-                            "#234A68",
                           textDecoration:
                             "none",
-                          fontSize:
-                            "13px",
-                          borderRadius:
-                            "7px",
+                          color: "#234A68",
+                          fontSize: "13px",
+                          padding:
+                            "9px 10px",
+                          borderRadius: "7px",
+                          transition:
+                            "background 0.2s ease, color 0.2s ease",
                         }}
-                        onMouseEnter={(
-                          e
-                        ) => {
+                        onMouseEnter={(e) => {
                           e.currentTarget.style.background =
                             "#EAF6FF";
                           e.currentTarget.style.color =
-                            "#2878B5";
+                            "#F2C94C";
                         }}
-                        onMouseLeave={(
-                          e
-                        ) => {
+                        onMouseLeave={(e) => {
                           e.currentTarget.style.background =
                             "transparent";
                           e.currentTarget.style.color =
                             "#234A68";
                         }}
                       >
-                        {item.name}
+                        {child.label}
                       </Link>
                     )
                   )}
