@@ -516,6 +516,95 @@ export default function Home() {
           boxSizing: "border-box",
         }}
       >
+        {/* ==================== 소개 / SNS ==================== */}
+
+<section
+  style={{
+    width: "100%",
+    maxWidth: "1100px",
+    margin: "25px auto 0",
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: "25px",
+  }}
+>
+  {/* 자기소개 */}
+
+  <section
+    style={{
+      background: "#FFFFFF",
+      padding: "25px",
+      borderRadius: "20px",
+      border: "1px solid #B9DFF5",
+      boxShadow:
+        "0 10px 30px rgba(40, 120, 181, 0.08)",
+    }}
+  >
+    <h2
+      style={{
+        margin: 0,
+        fontSize: "20px",
+        fontWeight: "400",
+      }}
+    >
+      자기소개
+    </h2>
+
+    <p
+      style={{
+        marginTop: "15px",
+        fontSize: "14px",
+        lineHeight: "1.8",
+      }}
+    >
+      여기에 자기소개를 작성하세요.
+    </p>
+  </section>
+
+  {/* SNS */}
+
+  <section
+    style={{
+      background: "#FFFFFF",
+      padding: "25px",
+      borderRadius: "20px",
+      border: "1px solid #B9DFF5",
+      boxShadow:
+        "0 10px 30px rgba(40, 120, 181, 0.08)",
+    }}
+  >
+    <h2
+      style={{
+        margin: 0,
+        fontSize: "20px",
+        fontWeight: "400",
+      }}
+    >
+      SNS
+    </h2>
+
+    <div
+      style={{
+        marginTop: "15px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+      }}
+    >
+      <a href="#" style={{ color: "#2878B5" }}>
+        𝕏 Twitter
+      </a>
+
+      <a href="#" style={{ color: "#2878B5" }}>
+        ▶ YouTube
+      </a>
+
+      <a href="#" style={{ color: "#2878B5" }}>
+        🥐 크레페
+      </a>
+    </div>
+  </section>
+</section>
         {/* ==================== 방명록 ==================== */}
 
         <section
