@@ -9,6 +9,18 @@ const [selectedDate, setSelectedDate] =
 
 const [currentDate, setCurrentDate] =
   useState(new Date());
+
+  const [isScheduleOpen, setIsScheduleOpen] =
+  useState(false);
+
+const [scheduleTitle, setScheduleTitle] =
+  useState("");
+
+const [scheduleStart, setScheduleStart] =
+  useState("");
+
+const [scheduleEnd, setScheduleEnd] =
+  useState("");
   
   const year = currentDate.getFullYear();
 const month = currentDate.getMonth();
@@ -296,19 +308,20 @@ const lastDate = new Date(year, month + 1, 0).getDate();
               textAlign: "right",
             }}
           >
-            <button
-              style={{
-                border: "none",
-                background: "#2878B5",
-                color: "#FFFFFF",
-                borderRadius: "8px",
-                padding: "9px 16px",
-                fontSize: "13px",
-                cursor: "pointer",
-              }}
-            >
-              + 일정 추가
-            </button>
+          <button
+  onClick={() => setIsScheduleOpen(true)}
+  style={{
+    border: "none",
+    background: "#2878B5",
+    color: "#FFFFFF",
+    borderRadius: "8px",
+    padding: "9px 16px",
+    fontSize: "13px",
+    cursor: "pointer",
+  }}
+>
+  + 일정 추가
+</button>
           </div>
         </section>
 
@@ -335,6 +348,170 @@ const lastDate = new Date(year, month + 1, 0).getDate();
           </button>
         </div>
       </section>
+      {isScheduleOpen && (
+  <div
+    style={{
+      position: "fixed",
+      inset: 0,
+      background: "rgba(35, 74, 104, 0.25)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 1000,
+      padding: "20px",
+      boxSizing: "border-box",
+    }}
+  >
+    <div
+      style={{
+        width: "100%",
+        maxWidth: "420px",
+        background: "#FFFFFF",
+        borderRadius: "20px",
+        padding: "30px",
+        boxShadow:
+          "0 15px 40px rgba(40, 120, 181, 0.2)",
+        boxSizing: "border-box",
+      }}
+    >
+      <h2
+        style={{
+          margin: 0,
+          fontSize: "22px",
+          fontWeight: "400",
+        }}
+      >
+        일정 추가
+      </h2>
+
+      <input
+        type="text"
+        placeholder="일정 이름"
+        value={scheduleTitle}
+        onChange={(e) =>
+          setScheduleTitle(e.target.value)
+        }
+        style={{
+          width: "100%",
+          marginTop: "20px",
+          padding: "10px",
+          border: "1px solid #B9DFF5",
+          borderRadius: "8px",
+          boxSizing: "border-box",
+          outline: "none",
+        }}
+      />
+
+      <p
+        style={{
+          marginTop: "20px",
+          marginBottom: "8px",
+          fontSize: "13px",
+        }}
+      >
+        시작일
+      </p>
+
+      <input
+        type="date"
+        value={scheduleStart}
+        onChange={(e) =>
+          setScheduleStart(e.target.value)
+        }
+        style={{
+          width: "100%",
+          padding: "10px",
+          border: "1px solid #B9DFF5",
+          borderRadius: "8px",
+          boxSizing: "border-box",
+        }}
+      />
+
+      <p
+        style={{
+          marginTop: "15px",
+          marginBottom: "8px",
+          fontSize: "13px",
+        }}
+      >
+        종료일
+      </p>
+
+      <input
+        type="date"
+        value={scheduleEnd}
+        onChange={(e) =>
+          setScheduleEnd(e.target.value)
+        }
+        style={{
+          width: "100%",
+          padding: "10px",
+          border: "1px solid #B9DFF5",
+          borderRadius: "8px",
+          boxSizing: "border-box",
+        }}
+      />
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          gap: "8px",
+          marginTop: "25px",
+        }}
+      >
+        <button
+          onClick={() => setIsScheduleOpen(false)}
+          style={{
+            border: "none",
+            background: "transparent",
+            color: "#8AAFC5",
+            padding: "8px 12px",
+            cursor: "pointer",
+          }}
+        >
+          취소
+        </button>
+
+        <button
+          onClick={() => {
+            if (!scheduleTitle.trim()) {
+              alert("일정 이름을 입력해주세요.");
+              return;
+            }
+
+            if (!scheduleStart || !scheduleEnd) {
+              alert("시작일과 종료일을 선택해주세요.");
+              return;
+            }
+
+            if (scheduleStart > scheduleEnd) {
+              alert("종료일은 시작일보다 빠를 수 없습니다.");
+              return;
+            }
+
+            alert("일정이 입력되었습니다!");
+
+            setIsScheduleOpen(false);
+            setScheduleTitle("");
+            setScheduleStart("");
+            setScheduleEnd("");
+          }}
+          style={{
+            border: "none",
+            background: "#2878B5",
+            color: "#FFFFFF",
+            borderRadius: "8px",
+            padding: "8px 15px",
+            cursor: "pointer",
+          }}
+        >
+          추가
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </main>
   );
 }
