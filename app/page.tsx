@@ -17,49 +17,72 @@ import {
   limit,
   serverTimestamp,
 } from "firebase/firestore";
-import {db,auth } from "../lib/firebase";
 
+import { db, auth } from "../lib/firebase";
 
 export default function Home() {
+  // ==================== 기본 상태 ====================
+
   const [imageUrl, setImageUrl] = useState("");
+  const [imageText, setImageText] = useState("이미지 변경");
 
+  const [user, setUser] = useState<User | null>(null);
 
-
-
-  const [guestName, setGuestName] = useState("");
   const ADMIN_EMAIL = "hyoeunzz09@gmail.com";
 
-const [user, setUser] = useState<User | null>(null);
-const [imageText, setImageText] = useState("이미지 변경");
-const [editingImageText, setEditingImageText] = useState(false);
-const [newImageText, setNewImageText] = useState("");
+  // ==================== 이미지 문구 상태 ====================
+
+  const [editingImageText, setEditingImageText] = useState(false);
+  const [newImageText, setNewImageText] = useState("");
+
+  // ==================== 방명록 상태 ====================
+
+  const [guestName, setGuestName] = useState("");
   const [guestMessage, setGuestMessage] = useState("");
   const [guestPassword, setGuestPassword] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [guestbookList, setGuestbookList] = useState<any[]>([]);
 
+  // ==================== 로그인 상태 확인 ====================
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      (currentUser) => {
+        setUser(currentUser);
+      }
+    );
+
+    return () => unsubscribe();
+  }, []);
+
   // ==================== 저장된 이미지 불러오기 ====================
 
-useEffect(() => {
-  const loadImages = async () => {
-    try {
-      const imageDoc = await getDoc(
-        doc(db, "homepage", "images")
-      );
+  useEffect(() => {
+    const loadImages = async () => {
+      try {
+        const imageDoc = await getDoc(
+          doc(db, "homepage", "images")
+        );
 
-      if (imageDoc.exists()) {
-        const data = imageDoc.data();
+        if (imageDoc.exists()) {
+          const data = imageDoc.data();
 
-        setImageUrl(data.image1 || "");
-        setImageText(data.imageText || "이미지 변경");
+          setImageUrl(data.image1 || "");
+          setImageText(
+            data.imageText || "이미지 변경"
+          );
+        }
+      } catch (error) {
+        console.error(
+          "이미지 불러오기 실패:",
+          error
+        );
       }
-    } catch (error) {
-      console.error("이미지 불러오기 실패:", error);
-    }
-  };
+    };
 
-  loadImages();
-}, []);
+    loadImages();
+  }, []);
 
   // ==================== 방명록 불러오기 ====================
 
@@ -74,14 +97,17 @@ useEffect(() => {
 
         const snapshot = await getDocs(q);
 
-        const list = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
+        const list = snapshot.docs.map((item) => ({
+          id: item.id,
+          ...item.data(),
         }));
 
         setGuestbookList(list);
       } catch (error) {
-        console.error("방명록 불러오기 실패:", error);
+        console.error(
+          "방명록 불러오기 실패:",
+          error
+        );
       }
     };
 
@@ -101,7 +127,10 @@ useEffect(() => {
       const formData = new FormData();
 
       formData.append("file", file);
-      formData.append("upload_preset", "homepage_upload");
+      formData.append(
+        "upload_preset",
+        "homepage_upload"
+      );
 
       const response = await fetch(
         "https://api.cloudinary.com/v1_1/nr7d0kyv/image/upload",
@@ -112,7 +141,9 @@ useEffect(() => {
       );
 
       if (!response.ok) {
-        throw new Error("Cloudinary 업로드 실패");
+        throw new Error(
+          "Cloudinary 업로드 실패"
+        );
       }
 
       const data = await response.json();
@@ -130,8 +161,49 @@ useEffect(() => {
 
       alert("이미지가 변경되었습니다!");
     } catch (error) {
-      console.error("이미지 업로드 실패:", error);
-      alert("이미지 업로드에 실패했습니다.");
+      console.error(
+        "이미지 업로드 실패:",
+        error
+      );
+
+      alert(
+        "이미지 업로드에 실패했습니다."
+      );
+    }
+  };
+
+  // ==================== 이미지 문구 저장 ====================
+
+  const handleImageTextSave = async () => {
+    const text = newImageText.trim();
+
+    if (!text) {
+      alert("문구를 입력해주세요.");
+      return;
+    }
+
+    try {
+      await setDoc(
+        doc(db, "homepage", "images"),
+        {
+          imageText: text,
+        },
+        { merge: true }
+      );
+
+      setImageText(text);
+      setEditingImageText(false);
+
+      alert("문구가 변경되었습니다!");
+    } catch (error) {
+      console.error(
+        "문구 변경 실패:",
+        error
+      );
+
+      alert(
+        "문구 변경에 실패했습니다."
+      );
     }
   };
 
@@ -154,13 +226,15 @@ useEffect(() => {
     }
 
     try {
-      const name = isAnonymous ? "익명" : guestName;
+      const name = isAnonymous
+        ? "익명"
+        : guestName.trim();
 
       const newDoc = await addDoc(
         collection(db, "guestbook"),
         {
           name,
-          message: guestMessage,
+          message: guestMessage.trim(),
           password: guestPassword,
           createdAt: serverTimestamp(),
         }
@@ -171,7 +245,7 @@ useEffect(() => {
           {
             id: newDoc.id,
             name,
-            message: guestMessage,
+            message: guestMessage.trim(),
             createdAt: new Date(),
           },
           ...prev,
@@ -185,8 +259,14 @@ useEffect(() => {
 
       alert("방명록이 등록되었습니다!");
     } catch (error) {
-      console.error("방명록 등록 실패:", error);
-      alert("방명록 등록에 실패했습니다.");
+      console.error(
+        "방명록 등록 실패:",
+        error
+      );
+
+      alert(
+        "방명록 등록에 실패했습니다."
+      );
     }
   };
 
@@ -199,7 +279,9 @@ useEffect(() => {
         background: "#EAF6FF",
         color: "#234A68",
         padding: "60px 5%",
-        fontFamily: "Arial, sans-serif",
+        fontFamily:
+          "Arial, sans-serif",
+        boxSizing: "border-box",
       }}
     >
       {/* ==================== HEADER ==================== */}
@@ -208,7 +290,8 @@ useEffect(() => {
         style={{
           maxWidth: "1100px",
           margin: "0 auto",
-          borderBottom: "1px solid #B9DFF5",
+          borderBottom:
+            "1px solid #B9DFF5",
           paddingBottom: "20px",
         }}
       >
@@ -236,24 +319,29 @@ useEffect(() => {
         <LoginButton />
       </header>
 
-      {/* ==================== 이미지 ==================== */}
+      {/* ==================== 메인 이미지 ==================== */}
 
       <section
         style={{
+          width: "100%",
           maxWidth: "1100px",
           margin: "45px auto 0",
+          boxSizing: "border-box",
         }}
       >
         <div
           style={{
             background: "#FFFFFF",
-            border: "1px solid #B9DFF5",
+            border:
+              "1px solid #B9DFF5",
             borderRadius: "20px",
             overflow: "hidden",
             boxShadow:
               "0 10px 30px rgba(40, 120, 181, 0.08)",
           }}
         >
+          {/* 이미지 */}
+
           <div
             style={{
               aspectRatio: "16 / 9",
@@ -287,165 +375,184 @@ useEffect(() => {
             )}
           </div>
 
-        <div
-  style={{
-    padding: "12px 18px",
-    borderTop: "1px solid #EAF6FF",
-    textAlign: "right",
-  }}
->
-  <span
-    style={{
-      color: "#2878B5",
-      fontSize: "12px",
-    }}
-  >
-    {imageText}
-  </span>
+          {/* 이미지 아래 영역 */}
 
-<span
-  style={{
-    color: "#2878B5",
-    fontSize: "12px",
-  }}
->
-  {imageText}
-</span>
+          <div
+            style={{
+              padding: "12px 18px",
+              borderTop:
+                "1px solid #EAF6FF",
+              textAlign: "right",
+            }}
+          >
+            {/* 현재 문구 */}
 
-{user?.email === "hyoeunzz09@gmail.com" && (
-  <>
-    {editingImageText ? (
-      <>
-        <input
-          type="text"
-          value={newImageText}
-          onChange={(e) => setNewImageText(e.target.value)}
-          style={{
-            marginLeft: "10px",
-            border: "1px solid #B9DFF5",
-            borderRadius: "8px",
-            padding: "6px 10px",
-            fontSize: "12px",
-            outline: "none",
-            width: "200px",
-          }}
-        />
+            <span
+              style={{
+                color: "#2878B5",
+                fontSize: "12px",
+              }}
+            >
+              {imageText}
+            </span>
 
-        <button
-          onClick={async () => {
-            const text = newImageText.trim();
+            {/* ==================== 관리자 전용 ==================== */}
 
-            if (!text) {
-              alert("문구를 입력해주세요.");
-              return;
-            }
+            {user?.email ===
+              ADMIN_EMAIL && (
+              <span
+                style={{
+                  marginLeft: "12px",
+                }}
+              >
+                {editingImageText ? (
+                  <>
+                    <input
+                      type="text"
+                      value={newImageText}
+                      onChange={(e) =>
+                        setNewImageText(
+                          e.target.value
+                        )
+                      }
+                      style={{
+                        border:
+                          "1px solid #B9DFF5",
+                        borderRadius:
+                          "8px",
+                        padding:
+                          "6px 10px",
+                        fontSize: "12px",
+                        outline: "none",
+                        width: "200px",
+                      }}
+                    />
 
-            try {
-              await setDoc(
-                doc(db, "homepage", "images"),
-                {
-                  imageText: text,
-                },
-                { merge: true }
-              );
+                    <button
+                      onClick={
+                        handleImageTextSave
+                      }
+                      style={{
+                        marginLeft:
+                          "8px",
+                        border: "none",
+                        background:
+                          "#2878B5",
+                        color:
+                          "#FFFFFF",
+                        borderRadius:
+                          "8px",
+                        padding:
+                          "6px 10px",
+                        fontSize:
+                          "12px",
+                        cursor:
+                          "pointer",
+                      }}
+                    >
+                      저장
+                    </button>
 
-              setImageText(text);
-              setEditingImageText(false);
+                    <button
+                      onClick={() => {
+                        setEditingImageText(
+                          false
+                        );
+                      }}
+                      style={{
+                        marginLeft:
+                          "6px",
+                        border: "none",
+                        background:
+                          "transparent",
+                        color:
+                          "#8AAFC5",
+                        fontSize:
+                          "12px",
+                        cursor:
+                          "pointer",
+                      }}
+                    >
+                      취소
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setNewImageText(
+                        imageText
+                      );
+                      setEditingImageText(
+                        true
+                      );
+                    }}
+                    style={{
+                      marginLeft:
+                        "10px",
+                      border: "none",
+                      background:
+                        "transparent",
+                      color:
+                        "#2878B5",
+                      fontSize:
+                        "12px",
+                      cursor:
+                        "pointer",
+                      padding: 0,
+                    }}
+                  >
+                    문구 변경
+                  </button>
+                )}
 
-              alert("문구가 변경되었습니다!");
-            } catch (error) {
-              console.error("문구 변경 실패:", error);
-              alert("문구 변경에 실패했습니다.");
-            }
-          }}
-          style={{
-            marginLeft: "8px",
-            border: "none",
-            background: "#2878B5",
-            color: "#FFFFFF",
-            borderRadius: "8px",
-            padding: "6px 10px",
-            fontSize: "12px",
-            cursor: "pointer",
-          }}
-        >
-          저장
-        </button>
-      </>
-    ) : (
-      <button
-        onClick={() => {
-          setNewImageText(imageText);
-          setEditingImageText(true);
-        }}
-        style={{
-          marginLeft: "10px",
-          border: "none",
-          background: "transparent",
-          color: "#2878B5",
-          fontSize: "12px",
-          cursor: "pointer",
-        }}
-      >
-        문구 변경
-      </button>
-    )}
+                {/* 이미지 변경 */}
 
+                <label
+                  style={{
+                    marginLeft:
+                      "12px",
+                    color:
+                      "#2878B5",
+                    fontSize:
+                      "12px",
+                    cursor:
+                      "pointer",
+                  }}
+                >
+                  이미지 변경
 
-    <label
-      style={{
-        color: "#2878B5",
-        fontSize: "12px",
-        cursor: "pointer",
-      }}
-    >
-      이미지 변경
-
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleImageUpload}
-        style={{ display: "none" }}
-      />
-    </label>
-
-    <button
-      onClick={() => {
-        setNewImageText(imageText);
-        setEditingImageText(true);
-      }}
-      style={{
-        border: "none",
-        background: "none",
-        color: "#2878B5",
-        fontSize: "12px",
-        cursor: "pointer",
-        padding: 0,
-      }}
-    >
-      문구 변경
-    </button>
-  </div>
-)}
-  </>
-)}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={
+                      handleImageUpload
+                    }
+                    style={{
+                      display:
+                        "none",
+                    }}
+                  />
+                </label>
+              </span>
+            )}
           </div>
         </div>
       </section>
 
       {/* ==================== MAIN ==================== */}
 
-    <section
-  style={{
-    width: "100%",
-    maxWidth: "1100px",
-    margin: "35px auto 0",
-    display: "grid",
-    gridTemplateColumns: "1fr",
-    gap: "25px",
-    boxSizing: "border-box",
-  }}
->
+      <section
+        style={{
+          width: "100%",
+          maxWidth: "1100px",
+          margin: "35px auto 0",
+          display: "grid",
+          gridTemplateColumns:
+            "1fr",
+          gap: "25px",
+          boxSizing: "border-box",
+        }}
+      >
         {/* ==================== 방명록 ==================== */}
 
         <section
@@ -453,9 +560,11 @@ useEffect(() => {
             background: "#FFFFFF",
             padding: "35px",
             borderRadius: "20px",
-            border: "1px solid #B9DFF5",
+            border:
+              "1px solid #B9DFF5",
             boxShadow:
               "0 10px 30px rgba(40, 120, 181, 0.08)",
+            boxSizing: "border-box",
           }}
         >
           <h2
@@ -469,7 +578,7 @@ useEffect(() => {
             방명록
           </h2>
 
-          {/* 최근 방명록 3개 */}
+          {/* 최근 방명록 */}
 
           <div
             style={{
@@ -479,7 +588,8 @@ useEffect(() => {
               marginBottom: "25px",
             }}
           >
-            {guestbookList.length === 0 ? (
+            {guestbookList.length ===
+            0 ? (
               <p
                 style={{
                   fontSize: "13px",
@@ -490,57 +600,79 @@ useEffect(() => {
                 아직 방명록이 없습니다.
               </p>
             ) : (
-              guestbookList.map((item) => (
-                <div
-                  key={item.id}
-                  style={{
-                    padding: "12px 0",
-                    borderBottom: "1px solid #EAF6FF",
-                    fontSize: "14px",
-                  }}
-                >
-                  <strong
+              guestbookList.map(
+                (item) => (
+                  <div
+                    key={item.id}
                     style={{
-                      fontWeight: "500",
-                      marginRight: "8px",
+                      padding:
+                        "12px 0",
+                      borderBottom:
+                        "1px solid #EAF6FF",
+                      fontSize:
+                        "14px",
                     }}
                   >
-                    {item.name}
-                  </strong>
+                    <strong
+                      style={{
+                        fontWeight:
+                          "500",
+                        marginRight:
+                          "8px",
+                      }}
+                    >
+                      {item.name}
+                    </strong>
 
-                  <span style={{ opacity: 0.8 }}>
-                    {item.message}
-                  </span>
-                </div>
-              ))
+                    <span
+                      style={{
+                        opacity:
+                          0.8,
+                      }}
+                    >
+                      {item.message}
+                    </span>
+                  </div>
+                )
+              )
             )}
           </div>
 
-          {/* ==================== 방명록 입력 ==================== */}
+          {/* 방명록 입력 */}
 
           <div
             style={{
-              borderTop: "1px solid #B9DFF5",
+              borderTop:
+                "1px solid #B9DFF5",
               paddingTop: "25px",
             }}
           >
             <div
               style={{
                 display: "flex",
-                alignItems: "center",
+                alignItems:
+                  "center",
                 gap: "10px",
-                marginBottom: "12px",
+                marginBottom:
+                  "12px",
                 fontSize: "13px",
               }}
             >
               <label>
                 <input
                   type="checkbox"
-                  checked={isAnonymous}
-                  onChange={(e) =>
-                    setIsAnonymous(e.target.checked)
+                  checked={
+                    isAnonymous
                   }
-                  style={{ marginRight: "5px" }}
+                  onChange={(e) =>
+                    setIsAnonymous(
+                      e.target.checked
+                    )
+                  }
+                  style={{
+                    marginRight:
+                      "5px",
+                  }}
                 />
                 익명
               </label>
@@ -549,19 +681,30 @@ useEffect(() => {
                 type="text"
                 placeholder="닉네임"
                 value={guestName}
-                disabled={isAnonymous}
+                disabled={
+                  isAnonymous
+                }
                 onChange={(e) =>
-                  setGuestName(e.target.value)
+                  setGuestName(
+                    e.target.value
+                  )
                 }
                 style={{
                   flex: 1,
-                  border: "1px solid #B9DFF5",
-                  borderRadius: "8px",
-                  padding: "8px 10px",
+                  minWidth: 0,
+                  border:
+                    "1px solid #B9DFF5",
+                  borderRadius:
+                    "8px",
+                  padding:
+                    "8px 10px",
                   outline: "none",
-                  background: isAnonymous
-                    ? "#F5F5F5"
-                    : "#FFFFFF",
+                  background:
+                    isAnonymous
+                      ? "#F5F5F5"
+                      : "#FFFFFF",
+                  boxSizing:
+                    "border-box",
                 }}
               />
             </div>
@@ -570,17 +713,23 @@ useEffect(() => {
               placeholder="방명록을 입력하세요"
               value={guestMessage}
               onChange={(e) =>
-                setGuestMessage(e.target.value)
+                setGuestMessage(
+                  e.target.value
+                )
               }
               style={{
                 width: "100%",
                 height: "75px",
-                boxSizing: "border-box",
+                boxSizing:
+                  "border-box",
                 resize: "none",
-                border: "1px solid #B9DFF5",
-                borderRadius: "10px",
+                border:
+                  "1px solid #B9DFF5",
+                borderRadius:
+                  "10px",
                 padding: "10px",
-                fontFamily: "inherit",
+                fontFamily:
+                  "inherit",
                 fontSize: "13px",
                 outline: "none",
               }}
@@ -596,28 +745,46 @@ useEffect(() => {
               <input
                 type="password"
                 placeholder="비밀번호"
-                value={guestPassword}
+                value={
+                  guestPassword
+                }
                 onChange={(e) =>
-                  setGuestPassword(e.target.value)
+                  setGuestPassword(
+                    e.target.value
+                  )
                 }
                 style={{
                   flex: 1,
-                  border: "1px solid #B9DFF5",
-                  borderRadius: "8px",
-                  padding: "8px 10px",
+                  minWidth: 0,
+                  border:
+                    "1px solid #B9DFF5",
+                  borderRadius:
+                    "8px",
+                  padding:
+                    "8px 10px",
                   outline: "none",
+                  boxSizing:
+                    "border-box",
                 }}
               />
 
               <button
-                onClick={handleGuestbookSubmit}
+                onClick={
+                  handleGuestbookSubmit
+                }
                 style={{
                   border: "none",
-                  background: "#2878B5",
-                  color: "#FFFFFF",
-                  borderRadius: "8px",
-                  padding: "8px 18px",
-                  cursor: "pointer",
+                  background:
+                    "#2878B5",
+                  color:
+                    "#FFFFFF",
+                  borderRadius:
+                    "8px",
+                  padding:
+                    "8px 18px",
+                  cursor:
+                    "pointer",
+                  flexShrink: 0,
                 }}
               >
                 등록
@@ -630,8 +797,10 @@ useEffect(() => {
             style={{
               display: "block",
               marginTop: "25px",
-              color: "#2878B5",
-              textDecoration: "none",
+              color:
+                "#2878B5",
+              textDecoration:
+                "none",
               fontSize: "13px",
               textAlign: "right",
             }}
@@ -647,9 +816,11 @@ useEffect(() => {
             background: "#FFFFFF",
             padding: "35px",
             borderRadius: "20px",
-            border: "1px solid #B9DFF5",
+            border:
+              "1px solid #B9DFF5",
             boxShadow:
               "0 10px 30px rgba(40, 120, 181, 0.08)",
+            boxSizing: "border-box",
           }}
         >
           <h2
@@ -664,34 +835,48 @@ useEffect(() => {
           </h2>
 
           <div>
-            {[1, 2].map((item) => (
-              <a
-                key={item}
-                href={"/diary/" + item}
-                style={{
-                  display: "block",
-                  padding: "15px 5px",
-                  borderBottom: "1px solid #EAF6FF",
-                  color: "#234A68",
-                  textDecoration: "none",
-                  fontSize: "15px",
-                }}
-              >
-                <span
+            {[1, 2].map(
+              (item) => (
+                <a
+                  key={item}
+                  href={
+                    "/diary/" +
+                    item
+                  }
                   style={{
-                    color: "#5BB9E8",
-                    marginRight: "8px",
-                    fontSize: "11px",
+                    display:
+                      "block",
+                    padding:
+                      "15px 5px",
+                    borderBottom:
+                      "1px solid #EAF6FF",
+                    color:
+                      "#234A68",
+                    textDecoration:
+                      "none",
+                    fontSize:
+                      "15px",
                   }}
                 >
-                  ●
-                </span>
+                  <span
+                    style={{
+                      color:
+                        "#5BB9E8",
+                      marginRight:
+                        "8px",
+                      fontSize:
+                        "11px",
+                    }}
+                  >
+                    ●
+                  </span>
 
-                {item === 1
-                  ? "오늘의 그림"
-                  : "비 오는 날"}
-              </a>
-            ))}
+                  {item === 1
+                    ? "오늘의 그림"
+                    : "비 오는 날"}
+                </a>
+              )
+            )}
           </div>
 
           <a
@@ -699,8 +884,10 @@ useEffect(() => {
             style={{
               display: "block",
               marginTop: "25px",
-              color: "#2878B5",
-              textDecoration: "none",
+              color:
+                "#2878B5",
+              textDecoration:
+                "none",
               fontSize: "13px",
               textAlign: "right",
             }}
