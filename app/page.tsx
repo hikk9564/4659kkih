@@ -40,25 +40,26 @@ const [newImageText, setNewImageText] = useState("");
 
   // ==================== 저장된 이미지 불러오기 ====================
 
-  useEffect(() => {
-    const loadImages = async () => {
-      try {
-        const imageDoc = await getDoc(
-          doc(db, "homepage", "images")
-        );
+useEffect(() => {
+  const loadImages = async () => {
+    try {
+      const imageDoc = await getDoc(
+        doc(db, "homepage", "images")
+      );
 
-        if (imageDoc.exists()) {
-          const data = imageDoc.data();
+      if (imageDoc.exists()) {
+        const data = imageDoc.data();
 
-          setImageUrl(data.image1 || "");
-        }
-      } catch (error) {
-        console.error("이미지 불러오기 실패:", error);
+        setImageUrl(data.image1 || "");
+        setImageText(data.imageText || "이미지 변경");
       }
-    };
+    } catch (error) {
+      console.error("이미지 불러오기 실패:", error);
+    }
+  };
 
-    loadImages();
-  }, []);
+  loadImages();
+}, []);
 
   // ==================== 방명록 불러오기 ====================
 
