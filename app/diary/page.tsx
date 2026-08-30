@@ -1,91 +1,173 @@
+
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Navigation from "../components/Navigation";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  orderBy,
+} from "firebase/firestore";
+import { db } from "../../lib/firebase";
+
+type Diary = {
+  id: string;
+  title: string;
+  content: string;
+  date: string;
+  icon: string;
+  isPublic: boolean;
+  createdAt?: number;
+};
+
+const diaryIcons = [
+  "🌱",
+  "☀️",
+  "🌙",
+  "☁️",
+  "🌧️",
+  "⭐",
+  "🌸",
+  "🍀",
+  "🎨",
+  "📖",
+];
 
 export default function DiaryPage() {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [diaries, setDiaries] = useState<Diary[]>([]);
+  const [selectedDiary, setSelectedDiary] =
+    useState<Diary | null>(null);
 
-  const [showScheduleModal, setShowScheduleModal] =
+  const [isWriteOpen, setIsWriteOpen] =
     useState(false);
 
-  const [scheduleTitle, setScheduleTitle] =
+  const [diaryTitle, setDiaryTitle] =
     useState("");
 
-  const [scheduleStart, setScheduleStart] =
+  const [diaryContent, setDiaryContent] =
     useState("");
 
-  const [scheduleEnd, setScheduleEnd] =
+  const [diaryDate, setDiaryDate] =
     useState("");
 
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
+  const [diaryIcon, setDiaryIcon] =
+    useState("🌱");
 
-  const firstDay = new Date(year, month, 1).getDay();
-  const lastDate = new Date(
-    year,
-    month + 1,
-    0
-  ).getDate();
+  const [isPublic, setIsPublic] =
+    useState(true);
 
-  const days = [];
+  const [loading, setLoading] =
+    useState(true);
 
-  for (let i = 0; i < firstDay; i++) {
-    days.push(null);
-  }
+  // ==================== 공개 일기 불러오기 ====================
 
-  for (let i = 1; i <= lastDate; i++) {
-    days.push(i);
-  }
+  useEffect(() => {
+    const loadDiaries = async () => {
+      try {
+        const diaryQuery = query(
+          collection(db, "diaries"),
+          where("isPublic", "==", true),
+          orderBy("date", "desc")
+        );
 
-  const goPreviousMonth = () => {
-    setCurrentDate(
-      new Date(year, month - 1, 1)
-    );
-  };
+        const snapshot =
+          await getDocs(diaryQuery);
 
-  const goNextMonth = () => {
-    setCurrentDate(
-      new Date(year, month + 1, 1)
-    );
-  };
+        const list = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Diary[];
 
-  const selectDate = (day: number) => {
-    setSelectedDate(
-      new Date(year, month, day)
-    );
-  };
+        setDiaries(list);
+      } catch (error) {
+        console.error(
+          "일기 불러오기 실패:",
+          error
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const selectedDateText =
-    selectedDate.getFullYear() +
-    "-" +
-    String(
-      selectedDate.getMonth() + 1
-    ).padStart(2, "0") +
-    "-" +
-    String(
-      selectedDate.getDate()
-    ).padStart(2, "0");
+    loadDiaries();
+  }, []);
 
-  const handleScheduleSave = () => {
-    if (!scheduleTitle.trim()) {
-      alert("일정 이름을 입력해주세요.");
+  // ==================== 일기 저장 ====================
+
+  const handleDiarySave = async () => {
+    if (!diaryTitle.trim()) {
+      alert("일기 제목을 입력해주세요.");
       return;
     }
 
-    if (!scheduleStart || !scheduleEnd) {
-      alert("시작일과 종료일을 입력해주세요.");
+    if (!diaryContent.trim()) {
+      alert("일기 내용을 입력해주세요.");
       return;
     }
 
-    alert(
-      `"${scheduleTitle}" 일정이 추가되었습니다!`
-    );
+    if (!diaryDate) {
+      alert("날짜를 선택해주세요.");
+      return;
+    }
 
-    setScheduleTitle("");
-    setScheduleStart("");
-    setScheduleEnd("");
-    setShowScheduleModal(false);
+    try {
+      const newDiary = {
+        title: diaryTitle.trim(),
+        content: diaryContent.trim(),
+        date: diaryDate,
+        icon: diaryIcon,
+        isPublic,
+        createdAt: Date.now(),
+      };
+
+      const docRef = await addDoc(
+        collection(db, "diaries"),
+        newDiary
+      );
+
+      // 공개 일기만 목록에 추가
+      if (isPublic) {
+        setDiaries((prev) =>
+          [
+            {
+              id: docRef.id,
+              ...newDiary,
+            },
+            ...prev,
+          ].sort((a, b) =>
+            b.date.localeCompare(a.date)
+          )
+        );
+      }
+
+      alert("일기가 저장되었습니다!");
+
+      setDiaryTitle("");
+      setDiaryContent("");
+      setDiaryDate("");
+      setDiaryIcon("🌱");
+      setIsPublic(true);
+      setIsWriteOpen(false);
+    } catch (error) {
+      console.error(
+        "일기 저장 실패:",
+        error
+      );
+
+      alert("일기 저장에 실패했습니다.");
+    }
+  };
+
+  // ==================== 날짜 표시 ====================
+
+  const formatDate = (date: string) => {
+    const [year, month, day] =
+      date.split("-");
+
+    return `${year}.${month}.${day}`;
   };
 
   return (
@@ -95,7 +177,8 @@ export default function DiaryPage() {
         background: "#EAF6FF",
         color: "#234A68",
         padding: "60px 5%",
-        fontFamily: "Arial, sans-serif",
+        fontFamily:
+          "Arial, sans-serif",
         boxSizing: "border-box",
       }}
     >
@@ -105,290 +188,223 @@ export default function DiaryPage() {
           margin: "0 auto",
         }}
       >
-        {/* ==================== 제목 ==================== */}
+        {/* ==================== HEADER ==================== */}
 
-        <h1
+        <header
           style={{
-            fontSize: "42px",
-            fontWeight: "400",
-            margin: 0,
+            borderBottom:
+              "1px solid #B9DFF5",
+            paddingBottom: "20px",
           }}
         >
-          DIARY
-        </h1>
+          <h1
+            style={{
+              fontSize: "42px",
+              fontWeight: "400",
+              margin: 0,
+              letterSpacing: "-1px",
+            }}
+          >
+            DIARY
+          </h1>
 
-        <p
-          style={{
-            marginTop: "8px",
-            marginBottom: "35px",
-            fontSize: "14px",
-            opacity: 0.65,
-          }}
-        >
-          기록하고 싶은 날을 선택하세요.
-        </p>
+          <p
+            style={{
+              marginTop: "8px",
+              marginBottom: "20px",
+              fontSize: "14px",
+              opacity: 0.65,
+            }}
+          >
+            지나온 날들의 기록
+          </p>
 
-        {/* ==================== 캘린더 ==================== */}
+          <Navigation />
+        </header>
+
+        {/* ==================== 다이어리 목록 ==================== */}
 
         <section
           style={{
-            background: "#FFFFFF",
-            border: "1px solid #B9DFF5",
-            borderRadius: "20px",
-            padding: "30px",
-            boxShadow:
-              "0 10px 30px rgba(40, 120, 181, 0.08)",
-            boxSizing: "border-box",
+            marginTop: "35px",
           }}
         >
-          {/* 월 이동 */}
-
           <div
             style={{
               display: "flex",
-              alignItems: "center",
               justifyContent: "space-between",
-              marginBottom: "25px",
+              alignItems: "center",
+              marginBottom: "18px",
             }}
           >
-            <button
-              onClick={goPreviousMonth}
-              style={{
-                border: "none",
-                background: "transparent",
-                color: "#2878B5",
-                fontSize: "20px",
-                cursor: "pointer",
-              }}
-            >
-              ←
-            </button>
-
             <h2
               style={{
                 margin: 0,
-                fontSize: "22px",
+                fontSize: "20px",
                 fontWeight: "400",
               }}
             >
-              {year}년 {month + 1}월
+              ALL DIARY
             </h2>
 
             <button
-              onClick={goNextMonth}
+              onClick={() =>
+                setIsWriteOpen(true)
+              }
               style={{
                 border: "none",
-                background: "transparent",
-                color: "#2878B5",
-                fontSize: "20px",
+                background: "#2878B5",
+                color: "#FFFFFF",
+                borderRadius: "8px",
+                padding: "9px 15px",
                 cursor: "pointer",
+                fontSize: "13px",
               }}
             >
-              →
+              ✎ 일기 작성
             </button>
           </div>
 
-          {/* 요일 */}
+          {/* 목록 */}
 
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(7, minmax(0, 1fr))",
-              marginBottom: "8px",
+              background: "#FFFFFF",
+              border:
+                "1px solid #B9DFF5",
+              borderRadius: "20px",
+              padding: "10px",
+              boxShadow:
+                "0 10px 30px rgba(40, 120, 181, 0.08)",
+              boxSizing: "border-box",
             }}
           >
-            {[
-              "일",
-              "월",
-              "화",
-              "수",
-              "목",
-              "금",
-              "토",
-            ].map((day) => (
+            {loading ? (
               <div
-                key={day}
                 style={{
+                  padding: "50px 20px",
                   textAlign: "center",
-                  fontSize: "13px",
-                  padding: "10px 0",
-                  opacity: 0.6,
+                  color: "#8AAFC5",
+                  fontSize: "14px",
                 }}
               >
-                {day}
+                일기를 불러오는 중...
               </div>
-            ))}
-          </div>
-
-          {/* 날짜 */}
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(7, minmax(0, 1fr))",
-              gap: "6px",
-            }}
-          >
-            {days.map((day, index) => {
-              if (day === null) {
-                return (
-                  <div
-                    key={index}
+            ) : diaries.length === 0 ? (
+              <div
+                style={{
+                  padding: "50px 20px",
+                  textAlign: "center",
+                  color: "#8AAFC5",
+                  fontSize: "14px",
+                }}
+              >
+                아직 공개된 일기가 없습니다.
+              </div>
+            ) : (
+              <div
+                style={{
+                  maxHeight: "650px",
+                  overflowY: "auto",
+                }}
+              >
+                {diaries.map((diary) => (
+                  <button
+                    key={diary.id}
+                    onClick={() =>
+                      setSelectedDiary(diary)
+                    }
                     style={{
-                      minHeight: "75px",
+                      width: "100%",
+                      border: "none",
+                      borderBottom:
+                        "1px solid #EAF6FF",
+                      background:
+                        "transparent",
+                      padding:
+                        "18px 15px",
+                      cursor: "pointer",
+                      textAlign: "left",
+                      color: "#234A68",
                     }}
-                  />
-                );
-              }
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems:
+                          "center",
+                        gap: "10px",
+                      }}
+                    >
+                      {/* 일기 아이콘 */}
 
-              const isSelected =
-                selectedDate.getFullYear() === year &&
-                selectedDate.getMonth() === month &&
-                selectedDate.getDate() === day;
+                      <span
+                        style={{
+                          fontSize: "18px",
+                          flexShrink: 0,
+                        }}
+                      >
+                        {diary.icon}
+                      </span>
 
-              return (
-                <button
-                  key={day}
-                  onClick={() => selectDate(day)}
-                  style={{
-                    minHeight: "75px",
-                    border: isSelected
-                      ? "1px solid #2878B5"
-                      : "1px solid transparent",
-                    borderRadius: "10px",
-                    background: isSelected
-                      ? "#EAF6FF"
-                      : "transparent",
-                    color: "#234A68",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    textAlign: "left",
-                    padding: "10px",
-                  }}
-                >
-                  {day}
-                </button>
-              );
-            })}
-          </div>
-        </section>
+                      <div
+                        style={{
+                          flex: 1,
+                          minWidth: 0,
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontSize: "15px",
+                            whiteSpace:
+                              "nowrap",
+                            overflow:
+                              "hidden",
+                            textOverflow:
+                              "ellipsis",
+                          }}
+                        >
+                          {diary.title}
+                        </div>
 
-        {/* ==================== 선택한 날짜 ==================== */}
+                        <div
+                          style={{
+                            marginTop: "5px",
+                            fontSize: "12px",
+                            color:
+                              "#8AAFC5",
+                          }}
+                        >
+                          {formatDate(
+                            diary.date
+                          )}
+                        </div>
+                      </div>
 
-        <section
-          style={{
-            background: "#FFFFFF",
-            border: "1px solid #B9DFF5",
-            borderRadius: "20px",
-            padding: "30px",
-            marginTop: "25px",
-            boxShadow:
-              "0 10px 30px rgba(40, 120, 181, 0.08)",
-            boxSizing: "border-box",
-          }}
-        >
-          <h2
-            style={{
-              margin: 0,
-              fontSize: "20px",
-              fontWeight: "400",
-            }}
-          >
-            {selectedDateText}
-          </h2>
-
-          {/* 일기 영역 */}
-
-          <div
-            style={{
-              marginTop: "20px",
-              padding: "20px",
-              borderRadius: "12px",
-              background: "#F5FBFF",
-              fontSize: "14px",
-              opacity: 0.7,
-            }}
-          >
-            이 날짜의 일기는 아직 없습니다.
-          </div>
-
-          {/* 일정 */}
-
-          <div
-            style={{
-              marginTop: "20px",
-            }}
-          >
-            <h3
-              style={{
-                margin: 0,
-                fontSize: "16px",
-                fontWeight: "400",
-              }}
-            >
-              일정
-            </h3>
-
-            <p
-              style={{
-                fontSize: "13px",
-                opacity: 0.6,
-              }}
-            >
-              등록된 일정이 없습니다.
-            </p>
-          </div>
-
-          {/* 일정 추가 */}
-
-          <button
-            onClick={() =>
-              setShowScheduleModal(true)
-            }
-            style={{
-              marginTop: "10px",
-              border: "none",
-              background: "#2878B5",
-              color: "#FFFFFF",
-              borderRadius: "8px",
-              padding: "9px 16px",
-              cursor: "pointer",
-              fontSize: "13px",
-            }}
-          >
-            + 일정 추가
-          </button>
-
-          {/* 관리자 일기 작성 */}
-
-          <div
-            style={{
-              marginTop: "25px",
-              paddingTop: "20px",
-              borderTop: "1px solid #EAF6FF",
-            }}
-          >
-            <button
-              style={{
-                border: "none",
-                background: "transparent",
-                color: "#2878B5",
-                fontSize: "13px",
-                cursor: "pointer",
-              }}
-            >
-              🔒 일기 작성
-            </button>
+                      <span
+                        style={{
+                          color: "#B9DFF5",
+                          fontSize: "18px",
+                        }}
+                      >
+                        ›
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </div>
 
-      {/* ==================== 일정 추가 팝업 ==================== */}
+      {/* ==================== 일기 상세 팝업 ==================== */}
 
-      {showScheduleModal && (
+      {selectedDiary && (
         <div
+          onClick={() =>
+            setSelectedDiary(null)
+          }
           style={{
             position: "fixed",
             inset: 0,
@@ -399,17 +415,144 @@ export default function DiaryPage() {
             justifyContent: "center",
             padding: "20px",
             zIndex: 1000,
+            boxSizing: "border-box",
           }}
         >
           <div
+            onClick={(e) =>
+              e.stopPropagation()
+            }
             style={{
               width: "100%",
-              maxWidth: "420px",
+              maxWidth: "620px",
+              maxHeight: "80vh",
+              overflowY: "auto",
               background: "#FFFFFF",
-              borderRadius: "18px",
+              borderRadius: "20px",
+              padding: "35px",
+              boxShadow:
+                "0 15px 40px rgba(40, 120, 181, 0.2)",
+              boxSizing: "border-box",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "28px",
+                }}
+              >
+                {selectedDiary.icon}
+              </span>
+
+              <div>
+                <h2
+                  style={{
+                    margin: 0,
+                    fontSize: "24px",
+                    fontWeight: "400",
+                  }}
+                >
+                  {selectedDiary.title}
+                </h2>
+
+                <p
+                  style={{
+                    margin:
+                      "7px 0 0",
+                    fontSize: "12px",
+                    color: "#8AAFC5",
+                  }}
+                >
+                  {formatDate(
+                    selectedDiary.date
+                  )}
+                </p>
+              </div>
+            </div>
+
+            <div
+              style={{
+                marginTop: "25px",
+                paddingTop: "25px",
+                borderTop:
+                  "1px solid #EAF6FF",
+                fontSize: "14px",
+                lineHeight: "1.9",
+                whiteSpace: "pre-wrap",
+                color: "#234A68",
+              }}
+            >
+              {selectedDiary.content}
+            </div>
+
+            <div
+              style={{
+                textAlign: "right",
+                marginTop: "25px",
+              }}
+            >
+              <button
+                onClick={() =>
+                  setSelectedDiary(null)
+                }
+                style={{
+                  border: "none",
+                  background: "#2878B5",
+                  color: "#FFFFFF",
+                  borderRadius: "8px",
+                  padding:
+                    "9px 16px",
+                  cursor: "pointer",
+                  fontSize: "13px",
+                }}
+              >
+                닫기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== 일기 작성 팝업 ==================== */}
+
+      {isWriteOpen && (
+        <div
+          onClick={() =>
+            setIsWriteOpen(false)
+          }
+          style={{
+            position: "fixed",
+            inset: 0,
+            background:
+              "rgba(35, 74, 104, 0.25)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+            zIndex: 1000,
+            boxSizing: "border-box",
+          }}
+        >
+          <div
+            onClick={(e) =>
+              e.stopPropagation()
+            }
+            style={{
+              width: "100%",
+              maxWidth: "520px",
+              maxHeight: "85vh",
+              overflowY: "auto",
+              background: "#FFFFFF",
+              borderRadius: "20px",
               padding: "30px",
               boxShadow:
-                "0 15px 40px rgba(40, 120, 181, 0.15)",
+                "0 15px 40px rgba(40, 120, 181, 0.2)",
               boxSizing: "border-box",
             }}
           >
@@ -420,132 +563,239 @@ export default function DiaryPage() {
                 fontWeight: "400",
               }}
             >
-              일정 추가
+              일기 작성
             </h2>
 
-            <div
+            {/* 날짜 */}
+
+            <label
               style={{
-                marginTop: "25px",
+                display: "block",
+                marginTop: "22px",
+                marginBottom: "7px",
+                fontSize: "13px",
               }}
             >
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "13px",
-                  marginBottom: "7px",
-                }}
-              >
-                일정 이름
-              </label>
+              날짜
+            </label>
 
-              <input
-                type="text"
-                value={scheduleTitle}
-                onChange={(e) =>
-                  setScheduleTitle(
-                    e.target.value
-                  )
-                }
-                placeholder="예: 친구 만나기"
-                style={{
-                  width: "100%",
-                  boxSizing: "border-box",
-                  border:
-                    "1px solid #B9DFF5",
-                  borderRadius: "8px",
-                  padding: "10px",
-                  outline: "none",
-                }}
-              />
-            </div>
-
-            <div
+            <input
+              type="date"
+              value={diaryDate}
+              onChange={(e) =>
+                setDiaryDate(
+                  e.target.value
+                )
+              }
               style={{
+                width: "100%",
+                padding: "10px",
+                border:
+                  "1px solid #B9DFF5",
+                borderRadius: "8px",
+                boxSizing:
+                  "border-box",
+                outline: "none",
+              }}
+            />
+
+            {/* 제목 */}
+
+            <label
+              style={{
+                display: "block",
                 marginTop: "18px",
+                marginBottom: "7px",
+                fontSize: "13px",
               }}
             >
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "13px",
-                  marginBottom: "7px",
-                }}
-              >
-                시작일
-              </label>
+              제목
+            </label>
 
-              <input
-                type="date"
-                value={scheduleStart}
-                onChange={(e) =>
-                  setScheduleStart(
-                    e.target.value
-                  )
-                }
-                style={{
-                  width: "100%",
-                  boxSizing: "border-box",
-                  border:
-                    "1px solid #B9DFF5",
-                  borderRadius: "8px",
-                  padding: "10px",
-                  outline: "none",
-                }}
-              />
-            </div>
-
-            <div
+            <input
+              type="text"
+              value={diaryTitle}
+              onChange={(e) =>
+                setDiaryTitle(
+                  e.target.value
+                )
+              }
+              placeholder="오늘의 제목"
               style={{
+                width: "100%",
+                padding: "10px",
+                border:
+                  "1px solid #B9DFF5",
+                borderRadius: "8px",
+                boxSizing:
+                  "border-box",
+                outline: "none",
+              }}
+            />
+
+            {/* 아이콘 */}
+
+            <label
+              style={{
+                display: "block",
                 marginTop: "18px",
+                marginBottom: "10px",
+                fontSize: "13px",
               }}
             >
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "13px",
-                  marginBottom: "7px",
-                }}
-              >
-                종료일
-              </label>
-
-              <input
-                type="date"
-                value={scheduleEnd}
-                onChange={(e) =>
-                  setScheduleEnd(
-                    e.target.value
-                  )
-                }
-                style={{
-                  width: "100%",
-                  boxSizing: "border-box",
-                  border:
-                    "1px solid #B9DFF5",
-                  borderRadius: "8px",
-                  padding: "10px",
-                  outline: "none",
-                }}
-              />
-            </div>
+              아이콘
+            </label>
 
             <div
               style={{
                 display: "flex",
-                justifyContent: "flex-end",
+                flexWrap: "wrap",
+                gap: "8px",
+              }}
+            >
+              {diaryIcons.map(
+                (icon) => (
+                  <button
+                    key={icon}
+                    onClick={() =>
+                      setDiaryIcon(icon)
+                    }
+                    style={{
+                      width: "42px",
+                      height: "42px",
+                      border:
+                        diaryIcon === icon
+                          ? "2px solid #2878B5"
+                          : "1px solid #B9DFF5",
+                      borderRadius: "10px",
+                      background:
+                        diaryIcon === icon
+                          ? "#EAF6FF"
+                          : "#FFFFFF",
+                      fontSize: "19px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {icon}
+                  </button>
+                )
+              )}
+            </div>
+
+            {/* 내용 */}
+
+            <label
+              style={{
+                display: "block",
+                marginTop: "18px",
+                marginBottom: "7px",
+                fontSize: "13px",
+              }}
+            >
+              내용
+            </label>
+
+            <textarea
+              value={diaryContent}
+              onChange={(e) =>
+                setDiaryContent(
+                  e.target.value
+                )
+              }
+              placeholder="오늘의 이야기를 적어보세요."
+              rows={10}
+              style={{
+                width: "100%",
+                padding: "12px",
+                border:
+                  "1px solid #B9DFF5",
+                borderRadius: "8px",
+                boxSizing:
+                  "border-box",
+                outline: "none",
+                resize: "vertical",
+                fontFamily:
+                  "inherit",
+                color: "#234A68",
+                lineHeight: "1.7",
+              }}
+            />
+
+            {/* 공개 여부 */}
+
+            <div
+              style={{
+                marginTop: "18px",
+                padding: "15px",
+                borderRadius: "10px",
+                background: "#F5FBFF",
+              }}
+            >
+              <label
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "9px",
+                  cursor: "pointer",
+                  fontSize: "13px",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={isPublic}
+                  onChange={(e) =>
+                    setIsPublic(
+                      e.target.checked
+                    )
+                  }
+                />
+
+                {isPublic
+                  ? "공개 일기"
+                  : "비공개 일기"}
+              </label>
+
+              <p
+                style={{
+                  margin:
+                    "7px 0 0 24px",
+                  fontSize: "11px",
+                  color: "#8AAFC5",
+                }}
+              >
+                {isPublic
+                  ? "방문자가 다이어리 목록에서 볼 수 있어요."
+                  : "외부 방문자에게 공개되지 않아요."}
+              </p>
+            </div>
+
+            {/* 버튼 */}
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent:
+                  "flex-end",
                 gap: "8px",
                 marginTop: "25px",
               }}
             >
               <button
-                onClick={() =>
-                  setShowScheduleModal(false)
-                }
+                onClick={() => {
+                  setIsWriteOpen(false);
+                  setDiaryTitle("");
+                  setDiaryContent("");
+                  setDiaryDate("");
+                  setDiaryIcon("🌱");
+                  setIsPublic(true);
+                }}
                 style={{
                   border: "none",
-                  background: "transparent",
+                  background:
+                    "transparent",
                   color: "#8AAFC5",
-                  padding: "8px 12px",
+                  padding:
+                    "8px 12px",
                   cursor: "pointer",
                 }}
               >
@@ -553,13 +803,16 @@ export default function DiaryPage() {
               </button>
 
               <button
-                onClick={handleScheduleSave}
+                onClick={handleDiarySave}
                 style={{
                   border: "none",
-                  background: "#2878B5",
+                  background:
+                    "#2878B5",
                   color: "#FFFFFF",
-                  borderRadius: "8px",
-                  padding: "8px 16px",
+                  borderRadius:
+                    "8px",
+                  padding:
+                    "9px 16px",
                   cursor: "pointer",
                 }}
               >
@@ -572,3 +825,4 @@ export default function DiaryPage() {
     </main>
   );
 }
+
