@@ -655,7 +655,7 @@ const handleSNSSave = async () => {
     maxWidth: "1100px",
     margin: "25px auto 0",
     display: "grid",
-    gridTemplateColumns: "1fr 1fr",
+    gridTemplateColumns: "1fr",
     gap: "25px",
   }}
 >
