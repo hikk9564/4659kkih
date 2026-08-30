@@ -168,7 +168,7 @@ const lastDate = new Date(year, month + 1, 0).getDate();
       "repeat(7, minmax(0, 1fr))",
   }}
 >
-  {{Array.from({
+  {Array.from({
   length: firstDay + lastDate,
 }).map((_, index) => {
   const day = index - firstDay + 1;
