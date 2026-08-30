@@ -398,142 +398,105 @@ export default function Home() {
 
             {/* ==================== 관리자 전용 ==================== */}
 
-            {user?.email ===
-              ADMIN_EMAIL && (
-              <span
-                style={{
-                  marginLeft: "12px",
-                }}
-              >
-                {editingImageText ? (
-                  <>
-                    <input
-                      type="text"
-                      value={newImageText}
-                      onChange={(e) =>
-                        setNewImageText(
-                          e.target.value
-                        )
-                      }
-                      style={{
-                        border:
-                          "1px solid #B9DFF5",
-                        borderRadius:
-                          "8px",
-                        padding:
-                          "6px 10px",
-                        fontSize: "12px",
-                        outline: "none",
-                        width: "200px",
-                      }}
-                    />
+          {user?.email === ADMIN_EMAIL && (
+  <span
+    style={{
+      marginLeft: "12px",
+    }}
+  >
+    {editingImageText ? (
+      <>
+        <input
+          type="text"
+          value={newImageText}
+          onChange={(e) =>
+            setNewImageText(e.target.value)
+          }
+          style={{
+            border: "1px solid #B9DFF5",
+            borderRadius: "8px",
+            padding: "6px 10px",
+            fontSize: "12px",
+            outline: "none",
+            width: "200px",
+            boxSizing: "border-box",
+          }}
+        />
 
-                    <button
-                      onClick={
-                        handleImageTextSave
-                      }
-                      style={{
-                        marginLeft:
-                          "8px",
-                        border: "none",
-                        background:
-                          "#2878B5",
-                        color:
-                          "#FFFFFF",
-                        borderRadius:
-                          "8px",
-                        padding:
-                          "6px 10px",
-                        fontSize:
-                          "12px",
-                        cursor:
-                          "pointer",
-                      }}
-                    >
-                      저장
-                    </button>
+        <button
+          onClick={handleImageTextSave}
+          style={{
+            marginLeft: "8px",
+            border: "none",
+            background: "#2878B5",
+            color: "#FFFFFF",
+            borderRadius: "8px",
+            padding: "6px 10px",
+            fontSize: "12px",
+            cursor: "pointer",
+          }}
+        >
+          저장
+        </button>
 
-                    <button
-                      onClick={() => {
-                        setEditingImageText(
-                          false
-                        );
-                      }}
-                      style={{
-                        marginLeft:
-                          "6px",
-                        border: "none",
-                        background:
-                          "transparent",
-                        color:
-                          "#8AAFC5",
-                        fontSize:
-                          "12px",
-                        cursor:
-                          "pointer",
-                      }}
-                    >
-                      취소
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setNewImageText(
-                        imageText
-                      );
-                      setEditingImageText(
-                        true
-                      );
-                    }}
-                    style={{
-                      marginLeft:
-                        "10px",
-                      border: "none",
-                      background:
-                        "transparent",
-                      color:
-                        "#2878B5",
-                      fontSize:
-                        "12px",
-                      cursor:
-                        "pointer",
-                      padding: 0,
-                    }}
-                  >
-                    문구 변경
-                  </button>
-                )}
+        <button
+          onClick={() => {
+            setEditingImageText(false);
+          }}
+          style={{
+            marginLeft: "6px",
+            border: "none",
+            background: "transparent",
+            color: "#8AAFC5",
+            fontSize: "12px",
+            cursor: "pointer",
+            padding: 0,
+          }}
+        >
+          취소
+        </button>
+      </>
+    ) : (
+      <button
+        onClick={() => {
+          setNewImageText(imageText);
+          setEditingImageText(true);
+        }}
+        style={{
+          marginLeft: "10px",
+          border: "none",
+          background: "transparent",
+          color: "#2878B5",
+          fontSize: "12px",
+          cursor: "pointer",
+          padding: 0,
+        }}
+      >
+        문구 변경
+      </button>
+    )}
 
-                {/* 이미지 변경 */}
+    <label
+      style={{
+        marginLeft: "12px",
+        color: "#2878B5",
+        fontSize: "12px",
+        cursor: "pointer",
+      }}
+    >
+      이미지 변경
 
-                <label
-                  style={{
-                    marginLeft:
-                      "12px",
-                    color:
-                      "#2878B5",
-                    fontSize:
-                      "12px",
-                    cursor:
-                      "pointer",
-                  }}
-                >
-                  이미지 변경
-
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={
-                      handleImageUpload
-                    }
-                    style={{
-                      display:
-                        "none",
-                    }}
-                  />
-                </label>
-              </span>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleImageUpload}
+        style={{
+          display: "none",
+        }}
+      />
+    </label>
+  </span>
+)}
             )}
           </div>
         </div>
