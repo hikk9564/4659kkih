@@ -151,87 +151,87 @@ export default function CalendarPage() {
             ))}
           </div>
 
-          {/* ==================== 날짜 ==================== */}
+{/* ==================== 날짜 ==================== */}
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(7, minmax(0, 1fr))",
-            }}
-          >
-            {[
-              26,
-              27,
-              28,
-              29,
-              30,
-              31,
-              1,
-              2,
-              3,
-              4,
-              5,
-              6,
-              7,
-              8,
-              9,
-              10,
-              11,
-              12,
-              13,
-              14,
-              15,
-              16,
-              17,
-              18,
-              19,
-              20,
-              21,
-              22,
-              23,
-              24,
-              25,
-              26,
-              27,
-              28,
-              29,
-              30,
-              31,
-            ].map((day, index) => (
-  <button
-    key={index}
-    onClick={() => setSelectedDate(index)}
-    style={{
-      minHeight: "80px",
-      border: "none",
-      background:
-        selectedDate === index
-          ? "#FFF8D9"
-          : "#FFFFFF",
-    }}
-  >
-    {day}
-  </button>
-))}}
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns:
+      "repeat(7, minmax(0, 1fr))",
+  }}
+>
+  {[
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+  ].map((day, index) => (
+    <button
+      key={index}
+      onClick={() => setSelectedDate(index)}
+      style={{
+        minHeight: "80px",
+        border: "none",
+        background:
+          selectedDate === index
+            ? "#FFF8D9"
+            : "#FFFFFF",
+        color: "#234A68",
+        fontSize: "14px",
+        cursor: "pointer",
+        padding: "10px",
+        textAlign: "left",
+        transition: "background 0.2s ease",
+      }}
+    >
+      {day}
 
-              >
-                {date}
-
-                {/* 나중에 일기/일정 표시 */}
-
-                <div
-                  style={{
-                    marginTop: "8px",
-                    fontSize: "10px",
-                    color: "#5BB9E8",
-                  }}
-                >
-                  {/* ● */}
-                </div>
-              </button>
-            ))}
-          </div>
+      {/* 나중에 일기/일정 표시 */}
+      <div
+        style={{
+          marginTop: "8px",
+          fontSize: "10px",
+          color: "#5BB9E8",
+        }}
+      >
+        {/* ● */}
+      </div>
+    </button>
+  ))}
+</div>
         </div>
 
         {/* ==================== 선택한 날짜 ==================== */}
