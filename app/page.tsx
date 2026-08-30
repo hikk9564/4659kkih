@@ -391,15 +391,7 @@ useEffect(() => {
       </button>
     )}
 
-  {user?.email === ADMIN_EMAIL && (
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "flex-end",
-      gap: "10px",
-    }}
-  >
+
     <label
       style={{
         color: "#2878B5",
