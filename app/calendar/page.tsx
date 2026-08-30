@@ -27,6 +27,15 @@ export default function CalendarPage() {
   const [isScheduleOpen, setIsScheduleOpen] =
     useState(false);
 
+  const [isDiaryOpen, setIsDiaryOpen] =
+  useState(false);
+
+const [diaryTitle, setDiaryTitle] =
+  useState("");
+
+const [diaryContent, setDiaryContent] =
+  useState("");
+
   const [scheduleTitle, setScheduleTitle] =
     useState("");
 
@@ -815,6 +824,7 @@ export default function CalendarPage() {
           }}
         >
           <button
+              onClick={() => setIsDiaryOpen(true)}
             style={{
               border:
                 "1px solid #B9DFF5",
@@ -1044,6 +1054,158 @@ export default function CalendarPage() {
           </div>
         </div>
       )}
+      {isDiaryOpen && (
+  <div
+    style={{
+      position: "fixed",
+      inset: 0,
+      background: "rgba(35, 74, 104, 0.25)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 1000,
+      padding: "20px",
+      boxSizing: "border-box",
+    }}
+  >
+    <div
+      style={{
+        width: "100%",
+        maxWidth: "520px",
+        background: "#FFFFFF",
+        borderRadius: "20px",
+        padding: "30px",
+        boxShadow:
+          "0 15px 40px rgba(40, 120, 181, 0.2)",
+        boxSizing: "border-box",
+      }}
+    >
+      <h2
+        style={{
+          margin: 0,
+          fontSize: "22px",
+          fontWeight: "400",
+        }}
+      >
+        일기 작성
+      </h2>
+
+      <p
+        style={{
+          marginTop: "8px",
+          fontSize: "13px",
+          color: "#8AAFC5",
+        }}
+      >
+        {selectedDate
+          ? `${selectedDate.getFullYear()}년 ${
+              selectedDate.getMonth() + 1
+            }월 ${selectedDate.getDate()}일`
+          : "날짜를 먼저 선택해주세요."}
+      </p>
+
+      <input
+        type="text"
+        placeholder="일기 제목"
+        value={diaryTitle}
+        onChange={(e) =>
+          setDiaryTitle(e.target.value)
+        }
+        style={{
+          width: "100%",
+          marginTop: "20px",
+          padding: "10px",
+          border: "1px solid #B9DFF5",
+          borderRadius: "8px",
+          boxSizing: "border-box",
+          outline: "none",
+        }}
+      />
+
+      <textarea
+        placeholder="오늘의 이야기를 적어보세요."
+        value={diaryContent}
+        onChange={(e) =>
+          setDiaryContent(e.target.value)
+        }
+        rows={10}
+        style={{
+          width: "100%",
+          marginTop: "12px",
+          padding: "12px",
+          border: "1px solid #B9DFF5",
+          borderRadius: "8px",
+          boxSizing: "border-box",
+          outline: "none",
+          resize: "vertical",
+          fontFamily: "inherit",
+          color: "#234A68",
+        }}
+      />
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          gap: "8px",
+          marginTop: "20px",
+        }}
+      >
+        <button
+          onClick={() => {
+            setIsDiaryOpen(false);
+            setDiaryTitle("");
+            setDiaryContent("");
+          }}
+          style={{
+            border: "none",
+            background: "transparent",
+            color: "#8AAFC5",
+            padding: "8px 12px",
+            cursor: "pointer",
+          }}
+        >
+          취소
+        </button>
+
+        <button
+          onClick={() => {
+            if (!selectedDate) {
+              alert("먼저 날짜를 선택해주세요.");
+              return;
+            }
+
+            if (!diaryTitle.trim()) {
+              alert("일기 제목을 입력해주세요.");
+              return;
+            }
+
+            if (!diaryContent.trim()) {
+              alert("일기 내용을 입력해주세요.");
+              return;
+            }
+
+            alert("일기가 작성되었습니다!");
+
+            setIsDiaryOpen(false);
+            setDiaryTitle("");
+            setDiaryContent("");
+          }}
+          style={{
+            border: "none",
+            background: "#2878B5",
+            color: "#FFFFFF",
+            borderRadius: "8px",
+            padding: "8px 15px",
+            cursor: "pointer",
+          }}
+        >
+          저장
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </main>
   );
 }
