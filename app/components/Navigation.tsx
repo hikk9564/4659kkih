@@ -25,10 +25,18 @@ const menus = [
   },
   {
 
-  name: "기록",
-  href: "/calendar",
-  items: ["캘린더", "일기"],
-},
+ href: "#",
+    items: [
+      {
+        name: "일기",
+        href: "/diary",
+      },
+      {
+        name: "캘린더",
+        href: "/calendar",
+      },
+    ],
+  },
 ];
 
 export default function Navigation() {
