@@ -1,5 +1,6 @@
 "use client";
 
+import Navigation from "../components/Navigation";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import {
@@ -331,6 +332,8 @@ export default function PersonalityPage() {
         >
           PERSONALITY
         </h1>
+
+        <Navigation />
 
         <p
           style={{
